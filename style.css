@@ -1,0 +1,991 @@
+@import "tailwindcss";
+
+@theme {
+    /* Dodanie czcionki Consolas */
+    --font-consolas: "Consolas", "monospace";
+}
+
+/* Dodanie Twojego własnego wariantu (zastępuje plugin JS) */
+@custom-variant btn-container-hover {
+    &:where(.btn-container:hover &) {
+        @slot;
+    }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+
+    --global-radius: 16px;
+    --bg-rgba: 5, 5, 5;
+    --modal-overlay-rgb: 2, 2, 2;
+
+    --ui-blur: 20px;
+    --ui-opacity: 0.95;
+
+    --bg: #050505;
+    --bg-card: #0f0f0f;
+    --bg-header: #161616;
+    --bg-input: #000000;
+
+    /* Kolory tekstu */
+    --text-main: #e5e5e5;
+    --text-muted: #a1a1aa;
+    --text-secondary: #999999;
+    --text-placeholder: #636366;
+
+    /* Kolory akcentowe i interaktywne */
+    --primary-color: #d97706;
+    --primary-hover: #b45309;
+    --primary-light: rgba(217, 119, 6, 0.2);
+
+    --primary-color-hover: color-mix(in srgb, var(--primary-color), black 15%);
+    --primary-color-light: color-mix(in srgb, var(--primary-color), white 90%);
+    --primary-color-dim: color-mix(in srgb, var(--primary-color), transparent 90%);
+    --primary-border: var(--primary-color);
+
+    /* Kolory statusów */
+    --danger: #ff453a;
+    --danger-hover: rgba(255, 69, 58, 0.1);
+    --priority-low: #28c840;
+    --priority-med: #febc2e;
+    --priority-high: #ff5f57;
+
+    --accent-color: rgba(37, 99, 235, 0.2);
+    --cursor-size: 15px;
+    --cursor-bg: rgba(255, 255, 255, 0.3);
+
+    /* Bordery i cienie */
+    --border-light: rgba(255, 255, 255, 0.05);
+    --border-medium: rgba(255, 255, 255, 0.1);
+    --border-heavy: rgba(255, 255, 255, 0.15);
+    --shadow-card: 0 40px 80px rgba(0, 0, 0, 0.8);
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    padding: 0;
+    width: 100%;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-y: auto;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+input::placeholder {
+    color: var(--text-placeholder);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: calc(var(--global-radius) * 0.625);
+}
+
+/* Nadpisanie scrollbara dla mniejszej szerokości */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    /* Tutaj też można dać zmienną, jeśli ma być spójne z --border-medium */
+    border-radius: calc(var(--global-radius) * 0.625);
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+aside.sidebar-container {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    overflow-y: auto;
+    top: 0;
+    height: 100vh;
+}
+
+#context-menu {
+    min-width: 180px;
+}
+
+.cm-item {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: calc(var(--global-radius) * 0.5);
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+.cm-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.cm-item.danger {
+    color: var(--danger);
+}
+
+.cm-item.danger:hover {
+    background: var(--danger-hover);
+}
+
+main {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+#editor-aside {
+    width: 400px;
+    position: fixed;
+    top: 150px;
+    right: 50px;
+    height: auto;
+    max-height: 80vh;
+    background: var(--bg-card);
+    border: 1px solid var(--border-heavy);
+    border-radius: calc(var(--global-radius) * 1.5);
+    box-shadow: var(--shadow-card);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s ease;
+}
+
+#editor-header {
+    cursor: move;
+    padding: 20px 24px;
+    background: var(--bg-header);
+    border-radius: calc(var(--global-radius) * 1.5) calc(var(--global-radius) * 1.5) 0 0;
+    border-bottom: 1px solid var(--border-light);
+    user-select: none;
+}
+
+#editor-aside.translate-x-full {
+    display: none;
+    opacity: 0;
+}
+
+.item-card {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: calc(var(--global-radius) * 1.5);
+}
+
+.item-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-4px);
+    border-color: var(--primary-hover);
+}
+
+#feed-container {
+    display: block;
+    column-count: 3;
+    column-gap: 1.5rem;
+    padding: 20px;
+    width: 100%;
+}
+
+@media (max-width: 1200px) {
+    #feed-container {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    #feed-container {
+        column-count: 1;
+    }
+}
+
+.item-card.is-code-card {
+    border-color: rgba(168, 85, 247, 0.2);
+    background: rgba(168, 85, 247, 0.02);
+}
+
+#edit-content {
+    white-space: pre-wrap;
+    word-break: break-all;
+    tab-size: 4;
+}
+
+#editor-form {
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(80vh - 150px);
+}
+
+.priority-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.dot-low {
+    background: var(--priority-low);
+}
+
+.dot-med {
+    background: var(--priority-med);
+}
+
+.dot-high {
+    background: var(--priority-high);
+}
+
+.priority-dot.active {
+    transform: scale(1.3);
+    filter: brightness(1.2);
+    border: 1.5px solid white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.card-priority-indicator {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.coll-arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+    cursor: pointer;
+    width: 16px;
+    font-size: 10px;
+    color: #666;
+    /* Można zastąpić var(--text-secondary) */
+}
+
+.coll-arrow.open {
+    transform: rotate(90deg);
+    color: var(--accent-color);
+    /* Upewnij się, że --accent jest zdefiniowane */
+}
+
+.sub-folder {
+    margin-left: 1.2rem;
+    border-left: 1px solid var(--border-light);
+    padding-left: 0.8rem;
+}
+
+.nav-item-entry {
+    font-size: 13px;
+    padding: 8px 12px;
+    margin-left: 4px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: calc(var(--global-radius) * 0.5);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.nav-item-entry:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.nav-item-entry.active-item {
+    color: white;
+    background: rgba(0, 113, 227, 0.2);
+    font-weight: 600;
+}
+
+#quick-add-window {
+    position: fixed;
+    top: 100px;
+    left: 350px;
+    width: 500px;
+    z-index: 9999;
+    background: var(--bg-card);
+    border: 1px solid var(--border-heavy);
+    border-radius: calc(var(--global-radius) * 1.25);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#qa-header {
+    cursor: move;
+    background: var(--bg-header);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.type-pill {
+    padding: 8px 16px;
+    border-radius: calc(var(--global-radius) * 0.625);
+    font-size: 11px;
+    font-weight: 800;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: 0.2s;
+}
+
+.type-pill.active {
+    opacity: 1;
+    border-color: var(--accent-color);
+    /* Upewnij się, że --accent jest zdefiniowane */
+    background: rgba(0, 113, 227, 0.1);
+    color: var(--accent-color);
+    /* Upewnij się, że --accent jest zdefiniowane */
+}
+
+.input-base {
+    background: var(--bg-input);
+    border: 1px solid var(--border-medium);
+    border-radius: calc(var(--global-radius) * 0.75);
+    padding: 14px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input-base:focus {
+    border-color: var(--accent-color);
+    /* Upewnij się, że --accent jest zdefiniowane */
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    margin-left: auto;
+}
+
+.nav-item-entry:hover .item-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    padding: 2px;
+    border-radius: calc(var(--global-radius) * 0.25);
+    transition: all 0.2s;
+    font-size: 10px;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.2);
+}
+
+.btn-delete-quick:hover {
+    color: var(--priority-high);
+}
+
+.btn-fav-quick:hover {
+    color: var(--priority-med);
+}
+
+aside {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-bottom: 20px;
+}
+
+#project-nav {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+#settings-modal:not(.hidden) {
+    animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.settings-nav-item {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    border-radius: calc(var(--global-radius) * 0.75);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-placeholder);
+    transition: all 0.2s;
+}
+
+.settings-nav-item:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-nav-item.active {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-content {
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-nav-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.accent-picker:hover {
+    transform: scale(1.05);
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.bg-accent {
+    background-color: var(--accent-color) !important;
+    /* Zmienna z oryginału */
+}
+
+.text-accent {
+    color: var(--accent-color) !important;
+    /* Zmienna z oryginału */
+}
+
+.border-accent {
+    border-color: var(--accent-color) !important;
+    /* Zmienna z oryginału */
+}
+
+.ring-accent {
+    --tw-ring-color: var(--accent-ring) !important;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    /* Kolory pasują do primary, można zostawić lub zrobić gradient zmiennych */
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg);
+}
+
+.main-element:hover {
+    border-color: var(--primary-border);
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Elementy z tekstem primary */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Border dla elementów takich jak karty na drugim zdjęciu */
+.main-element {
+    border: 2px solid transparent;
+    /* Domyślnie przezroczysty */
+    transition: border-color 0.2s ease;
+}
+
+/* ZMIANA KOLORU BORDER NA HOVER */
+.main-element:hover {
+    border-color: var(--primary-border);
+}
+
+.Btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 40px;
+    height: 40px;
+    border: none;
+    /* Użycie zmiennej z pierwszego przycisku (dostosuj mnożnik) */
+    border-radius: calc(var(--global-radius) * 0.5);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: .3s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+    /* Kolor tła dopasowany do hovera z pierwszego przycisku */
+    background-color: var(--bg-color-second, rgb(255, 65, 65));
+}
+
+/* --- Reszta Twojego CSS pozostaje bez zmian, jeśli działają poprawnie --- */
+.sign {
+    width: 100%;
+    transition-duration: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sign svg {
+    width: 17px;
+}
+
+.sign svg path {
+    fill: white;
+}
+
+.text {
+    position: absolute;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: white;
+    font-size: 1.2em;
+    font-weight: 600;
+    transition-duration: .3s;
+}
+
+.Btn:hover {
+    width: 125px;
+    /* Użycie zmiennej przy hoverze */
+    border-radius: calc(var(--global-radius) * 0.5);
+    transition-duration: .3s;
+}
+
+.Btn:hover .sign {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 20px;
+}
+
+.Btn:hover .text {
+    opacity: 1;
+    width: 70%;
+    transition-duration: .3s;
+    padding-right: 10px;
+}
+
+.Btn:active {
+    transform: translate(2px, 2px);
+}
+
+.expo-out {
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-150%) skewX(-20deg);
+    }
+
+    100% {
+        transform: translateX(150%) skewX(-20deg);
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+
+
+
+/* Styles for mobile */
+
+@media (max-width: 768px) {
+
+    :root {
+        --curve-main: cubic-bezier(0.7, 0, 0.2, 1);
+        --spring-effect: cubic-bezier(0.5, 1.5, 0.5, 1);
+    }
+
+    .main-site-top-header, .header-container {
+        width: 100%;
+        margin: 0;
+        left: 0;
+        right: 0;
+        padding-right: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .first-section {
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .second-section {
+        margin-right: 0;
+        padding-right: 0;
+        gap: 6px;
+    }
+
+    .app-layout {
+        width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .sidebar-container {
+        /* Layout */
+        display: flex !important;
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100vh !important;
+        z-index: 99999 !important;
+
+        /* Glassmorphism Ultra */
+        background: rgba(10, 10, 10, 0.9) !important;
+        backdrop-filter: blur(25px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(25px) saturate(200%);
+        border: none !important;
+
+        /* Stan Początkowy - Efekt "Clip-Path Reveal" */
+        /* Zaczynamy od małego koła w miejscu przycisku hamburgera (prawy górny róg) */
+        clip-path: circle(0% at 90% 5%);
+        opacity: 0;
+        visibility: hidden;
+
+        transition:
+            clip-path 0.8s var(--curve-main),
+            opacity 0.4s linear,
+            visibility 0.8s;
+
+        padding: 60px 30px !important;
+    }
+
+    .sidebar-container.mobile-open {
+        clip-path: circle(150% at 90% 5%);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Animacja zawartości - "Wave Entry" */
+    .sidebar-container nav button {
+        opacity: 0;
+        transform: translateY(30px) rotateX(-30deg);
+        filter: blur(10px);
+        transition:
+            opacity 0.6s var(--curve-main),
+            transform 0.6s var(--spring-effect),
+            filter 0.6s var(--curve-main);
+    }
+
+    /* Precyzyjny Staggering (opóźnienia fali) */
+    .sidebar-container.mobile-open nav button:nth-child(1) {
+        transition-delay: 0.2s;
+    }
+
+    .sidebar-container.mobile-open nav button:nth-child(2) {
+        transition-delay: 0.28s;
+    }
+
+    .sidebar-container.mobile-open nav button:nth-child(3) {
+        transition-delay: 0.36s;
+    }
+
+    .sidebar-container.mobile-open nav button:nth-child(4) {
+        transition-delay: 0.44s;
+    }
+
+    .sidebar-container.mobile-open nav button:nth-child(5) {
+        transition-delay: 0.52s;
+    }
+
+    .sidebar-container.mobile-open nav button {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+        filter: blur(0);
+    }
+
+    /* Przycisk zamknięcia - Pływający nad treścią */
+    .mobile-close-btn {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        width: 50px;
+        height: 50px;
+        border-radius: 20px;
+        /* Modern squircle */
+        background: var(--primary-color) !important;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        border: none;
+        color: white;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        transform: scale(0) rotate(-45deg);
+        transition: all 0.5s var(--spring-effect);
+        transition-delay: 0.1s;
+    }
+
+    .sidebar-container.mobile-open .mobile-close-btn {
+        transform: scale(1) rotate(0deg);
+    }
+
+    /* Dynamiczne tło - gradienty śledzące */
+    .sidebar-container::after {
+        content: '';
+        position: absolute;
+        bottom: -20%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: var(--primary-color);
+        filter: blur(120px);
+        opacity: 0.2;
+        border-radius: 50%;
+        z-index: -1;
+        animation: pulse-bg 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulse-bg {
+        0% {
+            transform: scale(1) translate(0, 0);
+            opacity: 0.1;
+        }
+
+        100% {
+            transform: scale(1.5) translate(-50px, -50px);
+            opacity: 0.3;
+        }
+    }
+
+    /* Naprawa Scrollbara wewnątrz menu */
+    .sidebar-container::-webkit-scrollbar {
+        width: 0px;
+    }
+}
+
+/* Stylizacja nowej ikony dodawania */
+.custom-add-icon {
+    stroke: var(--primary-light);
+    fill: none;
+}
+
+.group:hover .custom-add-icon {
+    /* Delikatne wypełnienie przy najechaniu */
+    fill: rgba(var(--primary-rgb), 0.1);
+}
+
+.group:active .custom-add-icon {
+    stroke: white;
+    fill: var(--primary-color);
+    transition: 0s;
+}
+
+@media (max-width: 768px) {
+
+    .second-section {
+        gap: 8px !important;
+    }
+
+    /* Dopasowanie rozmiaru ikony na bardzo małe ekrany */
+    .custom-add-icon {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+/* Dodaj to do swojego pliku CSS */
+
+@media (max-width: 768px) {
+
+    /* 1. Główne okno na pełny ekran */
+    #settings-modal>div {
+        flex-direction: column;
+        height: 100vh;
+        max-height: 100vh;
+        width: 100vw;
+        border-radius: 0 !important;
+        border: none;
+    }
+
+    /* 2. Pasek boczny jako górna nawigacja */
+    #settings-modal aside {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: border-white/5;
+        padding: 1rem;
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 10px;
+        padding-top: 50px;
+    }
+
+    /* Ukrywamy logo/napis "System Configuration" na mobile, by oszczędzić miejsce */
+    #settings-modal aside>div:first-child {
+        display: none;
+    }
+
+    /* Kontener nawigacji w poziomie */
+    #settings-modal nav {
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    /* Ukrywamy stopkę paska bocznego (przyciski Zapisz/Powrót przeniesiemy niżej lub zmienimy ich styl) */
+    #settings-modal nav>div.pt-6 {
+        display: none;
+        /* Ukrywamy te konkretne przyciski w menu bocznym */
+    }
+
+    /* Styl przycisków menu w wersji poziomej */
+    .settings-nav-item {
+        padding: 8px 16px !important;
+        width: auto !important;
+        flex-shrink: 0;
+    }
+
+    .settings-nav-item div {
+        display: none;
+        /* Ukrywamy pionowy pasek aktywności */
+    }
+
+    .settings-nav-item.active {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 3. Kontent główny - dopasowanie */
+    #settings-main-content {
+        height: 100%;
+        padding-bottom: 80px;
+        /* Miejsce na przyciski akcji na dole */
+    }
+
+    .settings-content {
+        padding: 24px !important;
+        /* Mniejszy padding niż p-12 */
+    }
+
+    /* Zmniejszenie ogromnych nagłówków */
+    .settings-content h1 {
+        font-size: 2rem !important;
+        letter-spacing: -0.02em;
+    }
+
+    /* Siatka ustawień na 1 kolumnę */
+    .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* 4. Pływające przyciski akcji na dole (opcjonalnie) */
+    /* Możesz dodać nowy kontener w HTML widoczny tylko na mobile lub zmodyfikować istniejący */
+}
+
+/* Fix dla scrollbara na mobile */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

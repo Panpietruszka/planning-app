@@ -1,0 +1,1505 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    GoogleAuthProvider,
+    signInWithPopup
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    limit,
+    orderBy,
+    onSnapshot,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    deleteDoc,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
+
+let isInitialLoading = true;
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBvYHO1sYbPw35VRai37By4sqz0OKnml_0",
+    authDomain: "architect-pro-839a5.firebaseapp.com",
+    projectId: "architect-pro-839a5",
+    storageBucket: "architect-pro-839a5.firebasestorage.app",
+    messagingSenderId: "970538126376",
+    appId: "1:970538126376:web:1d41594e31f0f9c19c391d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app)
+
+// --- ZMIANA: Złoty akcent zamiast niebieskiego ---
+const loginBtn = document.getElementById('btn-login');
+if (loginBtn) {
+    loginBtn.onclick = async () => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-password').value;
+        if (!email || !pass) return alert("Wpisz e-mail i hasło!");
+
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            console.log("Zalogowano pomyślnie!");
+        } catch (err) {
+            if (err.code === 'auth/user-not-found') alert("Nie ma takiego użytkownika. Kliknij Zarejestruj!");
+            else if (err.code === 'auth/wrong-password') alert("Błędne hasło!");
+            else alert("Błąd: " + err.message);
+        }
+    };
+}
+
+const googleBtn = document.getElementById('google-login-btn');
+if (googleBtn) {
+    googleBtn.onclick = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            // Firebase zajmuje się resztą! 
+            // Jeśli e-mail istnieje, Firebase zaloguje użytkownika.
+            // Jeśli nie istnieje, stworzy konto.
+            await signInWithPopup(auth, provider);
+            console.log("Zalogowano przez Google!");
+        } catch (err) {
+            console.error("Błąd logowania Google:", err);
+
+            // Jeśli użytkownik ma już konto na hasło, Firebase wyrzuci błąd
+            // 'auth/account-exists-with-different-credential'
+            if (err.code === 'auth/account-exists-with-different-credential') {
+                alert("Ten e-mail jest już zarejestrowany hasłem. Zaloguj się hasłem, aby połączyć konta.");
+            } else {
+                alert("Błąd logowania: " + err.message);
+            }
+        }
+    };
+}
+
+const registerBtn = document.getElementById('register-btn');
+if (registerBtn) {
+    registerBtn.onclick = async () => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-password').value;
+        if (!email || !pass) return alert("Wpisz e-mail i hasło dla nowego konta!");
+
+        try {
+            await createUserWithEmailAndPassword(auth, email, pass);
+            alert("Konto utworzone pomyślnie! Zostajesz zalogowany.");
+        } catch (err) {
+            if (err.code === 'auth/email-already-in-use') alert("Ten e-mail jest już zajęty!");
+            else if (err.code === 'auth/weak-password') alert("Hasło musi mieć min. 6 znaków!");
+            else alert("Błąd rejestracji: " + err.message);
+        }
+    };
+}
+
+// --- ZMIANA: Złoty akcent w ikonach (stroke="currentColor" pobierze złoty z CSS) ---
+const ICONS = {
+    folder: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="14" height="14" viewBox="0 0 512 512" xml:space="preserve">
+<path fill="#FCD354" opacity="1.000000" stroke="none" 
+	d="
+M513.000000,137.000000 
+	C513.000000,234.354767 513.000000,331.709534 512.718262,429.199219 
+	C511.953033,430.124634 511.343018,430.864746 511.005035,431.713196 
+	C505.332855,445.952759 490.592010,457.123932 474.983643,457.104980 
+	C329.207092,456.927917 183.430237,457.017395 37.653572,456.903931 
+	C33.870476,456.901001 29.922153,455.925476 26.336681,454.619141 
+	C14.846350,450.432739 7.086315,442.365753 2.872280,430.860077 
+	C2.705878,430.405731 1.644419,430.279236 1.000002,430.000000 
+	C1.000000,314.978577 1.000000,199.957138 1.283464,84.801025 
+	C2.017307,84.207024 2.709845,83.824249 2.882781,83.277214 
+	C7.663084,68.156128 24.265808,56.590626 39.923183,56.816433 
+	C78.685974,57.375469 117.462250,56.992008 156.233109,57.003391 
+	C175.463715,57.009037 189.639542,66.381042 200.968033,81.505188 
+	C212.526871,96.272415 224.207001,110.545105 235.354477,125.222351 
+	C241.521713,133.342407 249.128204,137.072357 259.255035,137.059753 
+	C343.836578,136.954468 428.418335,136.999985 513.000000,137.000000 
+z"/>
+<path fill="#FFB125" opacity="1.000000" stroke="none" 
+	d="
+M200.968033,81.505188 
+	C202.859665,81.119728 204.852432,81.007698 206.845184,81.007507 
+	C296.214691,80.998848 385.584503,81.115433 474.953461,80.892349 
+	C490.820618,80.852745 505.321106,92.205849 511.023163,106.271408 
+	C511.366577,107.118523 511.955963,107.865936 512.715454,108.329865 
+	C513.000000,117.354225 513.000000,126.708458 513.000000,136.531342 
+	C428.418335,136.999985 343.836578,136.954468 259.255035,137.059753 
+	C249.128204,137.072357 241.521713,133.342407 235.354477,125.222351 
+	C224.207001,110.545105 212.526871,96.272415 200.968033,81.505188 
+z"/>
+</svg>`,
+    file: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+    link: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+    delete: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+ width="14" height="14" viewBox="0 0 20 20" enable-background="new 0 0 512 512" xml:space="preserve">
+<path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+d="
+M211.000000,0.999999 
+C241.354233,1.000000 271.708466,1.000000 302.236908,1.325844 
+C303.521271,2.208075 304.586334,2.892473 305.748322,3.301596 
+C322.534424,9.211809 338.162201,27.718729 337.049286,47.604980 
+C336.728027,53.345058 337.000000,59.118336 337.000000,65.000000 
+C366.295044,65.000000 394.945038,65.197922 423.589661,64.890999 
+C433.411469,64.785759 442.149231,66.831985 449.899261,72.971657 
+C458.857300,80.068344 464.712372,89.021118 464.903778,100.591721 
+C465.245514,121.247963 465.008362,141.913925 464.995850,162.575821 
+C464.990906,170.747589 458.684387,176.979385 450.446442,176.998810 
+C447.333252,177.006149 444.220062,177.000000 440.904327,177.000000 
+C440.249298,188.879227 439.622772,200.207428 439.000549,211.535873 
+C438.332184,223.704681 437.599182,235.870422 437.019165,248.043457 
+C436.280640,263.541565 435.716095,279.047882 434.984650,294.546356 
+C434.394409,307.052124 433.607422,319.548584 433.017212,332.054352 
+C432.285767,347.552826 431.716095,363.058868 430.984650,378.557343 
+C430.394440,391.063141 429.600922,403.559326 429.018677,416.065430 
+C428.281677,431.896820 427.212158,447.730988 427.108978,463.569305 
+C426.962128,486.102692 414.906830,503.217255 394.456940,511.054016 
+C393.816742,511.299377 393.478821,512.333557 393.000000,513.000000 
+C302.979095,513.000000 212.958206,513.000000 122.763115,512.674011 
+C121.785522,511.894623 121.028015,511.312744 120.171898,511.007080 
+C106.231804,506.030304 96.222511,497.156464 90.452530,483.177612 
+C86.113014,472.664337 87.229340,461.669769 86.149284,450.900452 
+C84.851715,437.962433 84.625542,424.914673 84.012810,411.910797 
+C83.298248,396.745605 82.706284,381.574646 81.988037,366.409668 
+C81.380020,353.572144 80.621727,340.741791 80.013725,327.904266 
+C79.295471,312.739288 78.706276,297.568146 77.988029,282.403168 
+C77.380020,269.565643 76.624954,256.735138 76.012901,243.897827 
+C75.297806,228.899323 74.567833,213.900253 74.043198,198.894470 
+C73.792206,191.715729 74.000000,184.520935 74.000000,177.000000 
+C69.441124,177.000000 66.305565,177.013229 63.170151,176.997406 
+C55.281399,176.957565 49.010880,170.646805 49.004940,162.693497 
+C48.990002,142.699173 49.353504,122.696815 48.898865,102.712837 
+C48.459385,83.395401 67.289772,64.656258 86.798698,64.907349 
+C114.952705,65.269699 143.114838,65.000000 171.273514,65.000000 
+C173.059402,65.000000 174.845276,65.000000 177.000000,65.000000 
+C177.000000,61.637413 176.987122,58.677708 177.002808,55.718151 
+C177.031067,50.391846 176.156250,44.862198 177.280640,39.776062 
+C181.259933,21.775997 191.883133,9.197958 209.536987,2.942560 
+C210.174103,2.716806 210.518951,1.666190 211.000000,0.999999 
+M224.500000,481.000000 
+C274.490479,481.000000 324.481171,481.077240 374.471283,480.946289 
+C387.139069,480.913116 392.562012,475.629242 393.752991,466.691254 
+C395.401489,454.319489 395.354095,441.720001 395.994324,429.216064 
+C396.685669,415.714813 397.351318,402.212158 397.993652,388.708466 
+C398.683380,374.207153 399.315369,359.703156 400.005127,345.201843 
+C400.647400,331.698151 401.351379,318.197388 401.993683,304.693695 
+C402.683411,290.192383 403.412018,275.692291 403.975128,261.185852 
+C404.431061,249.440262 404.667084,237.686157 404.998962,225.935760 
+C405.013092,225.436188 404.988068,224.934814 405.018066,224.436493 
+C405.962891,208.743988 406.912292,193.051758 407.872223,177.173401 
+C307.218018,177.173401 206.793060,177.173401 106.133156,177.173401 
+C106.763092,186.290344 107.505463,195.223358 107.970337,204.170822 
+C108.740860,219.001083 109.304222,233.841995 110.008560,248.675858 
+C110.633949,261.847076 111.364532,275.013336 111.989914,288.184540 
+C112.694244,303.018433 113.304207,317.856781 114.008545,332.690643 
+C114.633934,345.861847 115.377365,359.027557 115.986794,372.199463 
+C116.703926,387.699310 117.383133,403.201324 117.982864,418.706116 
+C118.404999,429.619843 118.612549,440.541809 119.024757,451.456024 
+C119.216995,456.546112 119.027611,461.781433 120.209709,466.660522 
+C121.101471,470.341370 123.115929,474.719055 126.042740,476.695465 
+C129.792679,479.227661 134.945267,480.761383 139.517960,480.820099 
+C167.508133,481.179657 195.505219,481.000000 224.500000,481.000000 
+M97.576668,97.000000 
+C95.743340,97.000015 93.908455,96.950706 92.076965,97.008766 
+C84.954559,97.234573 81.144226,101.023819 81.021858,108.191986 
+C80.916618,114.356506 81.000000,120.524261 81.000000,126.690582 
+C80.999992,132.775558 81.000000,138.860535 81.000000,144.646500 
+C198.779663,144.646500 315.847198,144.646500 433.000000,144.646500 
+C433.000000,132.964401 432.954529,121.635414 433.013794,110.306961 
+C433.065033,100.508636 429.532928,96.975800 419.538849,96.978958 
+C312.544769,97.012787 205.550720,97.000000 97.576668,97.000000 
+M211.331100,42.138721 
+C210.258896,49.616966 209.186707,57.095207 208.090683,64.739655 
+C241.275848,64.739655 273.003265,64.739655 304.999573,64.739655 
+C304.999573,60.179649 305.395630,55.833366 304.925781,51.582790 
+C303.478943,38.493683 298.563568,33.597000 285.677429,33.165844 
+C266.542175,32.525597 247.365387,32.772072 228.215271,33.126896 
+C221.738052,33.246914 215.183319,34.642906 211.331100,42.138721 
+z"/>
+<path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+d="
+M321.000000,336.000000 
+C321.000000,298.338440 320.998230,261.176849 321.001190,224.015274 
+C321.001984,214.326462 326.902069,208.996765 337.603058,208.999985 
+C347.019806,209.002838 352.998932,214.854599 352.999146,224.082825 
+C353.000732,294.073242 353.001129,364.063629 352.998657,434.054047 
+C352.998322,443.488983 346.890747,449.002472 336.466309,449.000031 
+C327.027252,448.997833 321.001923,443.154877 321.001129,433.986511 
+C320.998260,401.490997 321.000000,368.995514 321.000000,336.000000 
+z"/>
+<path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+d="
+M185.091370,447.418304 
+C174.926193,451.138519 165.176987,448.731384 161.872589,439.408997 
+C161.347565,437.927765 161.035904,436.284729 161.035004,434.716248 
+C160.994583,364.247803 160.996445,293.779358 161.004837,223.310883 
+C161.005798,215.168747 167.351929,209.300064 175.657990,208.917511 
+C183.390518,208.561340 189.088455,211.097885 192.073135,218.454010 
+C192.718246,220.043991 192.962311,221.899612 192.963364,223.633133 
+C193.006256,293.934998 192.992477,364.236877 193.013870,434.538757 
+C193.015640,440.343262 190.431335,444.459656 185.091370,447.418304 
+z"/>
+<path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+d="
+M272.916504,219.765472 
+C272.993317,291.650879 272.999573,363.110107 272.996002,434.569366 
+C272.995605,442.740509 266.675171,448.706909 258.464325,449.078430 
+C250.781952,449.426086 244.997772,447.038635 241.948593,439.670654 
+C241.351379,438.227539 241.038818,436.557861 241.037857,434.992401 
+C240.994171,364.366028 240.995270,293.739594 241.006851,223.113190 
+C241.008102,215.511810 247.393967,209.456924 254.849838,208.901443 
+C263.470520,208.259201 269.348053,211.543411 272.916504,219.765472 
+z"/>
+</svg>`,
+    star: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 210.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+};
+
+
+let items = [];
+let collections = [];
+let activeCollection = 'all';
+let activeTypeFilter = 'all';
+let searchQuery = '';
+let expandedCollections = new Set();
+let currentEditId = null;
+let qaPrio = 'med';
+let qaType = 'link';
+let tempEditPrio = 'med';
+let itemsLimit = 10;
+
+function initAppForUser() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // A. POKAZUJEMY SKELETONY (Zanim ruszy zapytanie do bazy)
+    showSkeletonScreens();
+
+    // 1. Zapytanie o KOLEKCJE (zazwyczaj jest ich mało, zostawiamy onSnapshot)
+    const qColl = query(
+        collection(db, 'collections'),
+        where("userId", "==", user.uid)
+    );
+
+    onSnapshot(qColl, snap => {
+        collections = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderSidebar();
+    });
+
+    // 2. Zapytanie o PRZEDMIOTY (z limitem i bez blokowania UI)
+    const qItems = query(
+        collection(db, 'raindrop_items'),
+        where("userId", "==", user.uid),
+        orderBy('createdAt', 'desc'),
+        limit(itemsLimit) // KLUCZOWE: nie pobieramy całego archiwum na start
+    );
+
+    onSnapshot(qItems, snap => {
+        // Sprawdzamy, czy to pierwsze ładowanie (żeby nie dodawać pojedynczo przy starcie)
+        if (isInitialLoading) {
+            items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderFeed();
+            isInitialLoading = false;
+            return;
+        }
+
+        snap.docChanges().forEach((change) => {
+            const docData = { id: change.doc.id, ...change.doc.data() };
+
+            if (change.type === "added") {
+                items.unshift(docData);
+                // Funkcja, która doda tylko 1 nowy element na górę listy w HTML
+                prependSingleElementToUI(docData);
+            }
+            if (change.type === "modified") {
+                const index = items.findIndex(item => item.id === docData.id);
+                if (index !== -1) items[index] = docData;
+                // Funkcja, która znajdzie element po ID i zmieni tylko jego treść
+                updateSingleElementInUI(docData);
+            }
+            if (change.type === "removed") {
+                items = items.filter(item => item.id !== docData.id);
+                // Funkcja usuwająca element z DOM
+                removeElementFromUI(docData.id);
+            }
+        });
+
+        renderSidebar(); // Odśwież liczniki w sidebarze
+    }, (error) => {
+        console.error("Błąd Snapshotu:", error);
+    });
+
+    // Ikona folderu
+    const iconAllContainer = document.getElementById('icon-all');
+    if (iconAllContainer) iconAllContainer.innerHTML = ICONS.folder;
+}
+
+function showSkeletonScreens() {
+    const feedContainer = document.getElementById('feed-container');
+    if (!feedContainer) return;
+
+    // Tworzymy 6 placeholderów, które udają karty z plikami
+    const skeletonHTML = Array(6).fill(0).map(() => `
+        <div class="skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-text short"></div>
+            <div class="skeleton-text long"></div>
+        </div>
+    `).join('');
+
+    feedContainer.innerHTML = skeletonHTML;
+}
+
+onAuthStateChanged(auth, async (user) => {
+    const overlay = document.getElementById('auth-overlay');
+    const userDisplayName = document.getElementById('user-display-name');
+    const userAvatar = document.getElementById('user-avatar');
+
+    // Pobieramy oba przyciski
+    const loginTrigger = document.getElementById('btn-login-trigger');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (user) {
+        // --- UŻYTKOWNIK ZALOGOWANY ---
+        if (overlay) overlay.style.display = 'none';
+
+        // Pokaż Logout, Ukryj Login
+        if (logoutBtn) logoutBtn.style.display = '';
+        if (loginTrigger) loginTrigger.style.display = 'none';
+
+        // Obsługa wylogowania
+        if (logoutBtn) {
+            logoutBtn.onclick = () => {
+                const confirmLogout = confirm("Czy napewno chcesz się wylogować?");
+                if (confirmLogout) {
+                    signOut(auth);
+                }
+            };
+        }
+
+        userDisplayName.textContent = user.displayName || user.email.split('@')[0];
+        if (user.photoURL) {
+            userAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`;
+        }
+
+        loadUserSettings(user);
+        initAppForUser();
+    } else {
+        // --- UŻYTKOWNIK NIEZALOGOWANY (GOŚĆ) ---
+        if (overlay) overlay.style.display = 'none'; // Nie blokujemy aplikacji
+
+        // Pokaż Login, Ukryj Logout
+        if (loginTrigger) loginTrigger.style.display = 'block';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+
+        // Kliknięcie w "Zaloguj się" otwiera Twój panel Firebase
+        if (loginTrigger) {
+            loginTrigger.onclick = () => {
+                if (overlay) overlay.style.display = 'flex';
+            };
+        }
+
+        // Reset danych widocznych dla gościa
+        if (userDisplayName) userDisplayName.textContent = "Gość";
+        if (userAvatar) userAvatar.innerHTML = "";
+
+        const feedContainer = document.getElementById('feed-container');
+        if (feedContainer) {
+            feedContainer.innerHTML = '<p class="empty-state">Zaloguj się, aby zarządzać swoimi plikami.</p>';
+        }
+    }
+    isInitialLoading = false;
+});
+
+// Obsługa przycisków
+document.getElementById('btn-login').onclick = async () => {
+    const e = document.getElementById('auth-email').value;
+    const p = document.getElementById('auth-password').value;
+    try { await signInWithEmailAndPassword(auth, e, p); }
+    catch (err) { alert("Błąd: " + err.message); }
+};
+
+let isLoginMode = true;
+
+document.getElementById('toggle-auth').onclick = () => {
+    isLoginMode = !isLoginMode;
+    const loginBtn = document.getElementById('btn-login');
+    const regBtn = document.getElementById('register-btn');
+    const toggleText = document.getElementById('toggle-auth');
+
+    if (isLoginMode) {
+        loginBtn.classList.remove('hidden');
+        regBtn.classList.add('hidden');
+        toggleText.innerText = "Nie masz konta? Zarejestruj się";
+    } else {
+        loginBtn.classList.add('hidden');
+        regBtn.classList.remove('hidden');
+        toggleText.innerText = "Masz już konto? Zaloguj się";
+    }
+};
+
+document.getElementById('logout-btn').onclick = () => {
+    if (confirm("Czy na pewno chcesz się wylogować?")) {
+        signOut(auth).catch(err => console.error("Błąd wylogowania:", err));
+    }
+};
+document.getElementById('btn-new-coll').onclick = () => {
+    document.getElementById('new-proj-box').classList.toggle('hidden');
+};
+
+document.getElementById('proj-name-in').onkeydown = async (e) => {
+    if (e.key === 'Enter' && e.target.value) {
+        const user = auth.currentUser;
+        await addDoc(collection(db, 'collections'), {
+            name: e.target.value,
+            parentId: 'global',
+            createdAt: serverTimestamp(),
+            userId: user.uid
+        });
+        e.target.value = '';
+        document.getElementById('new-proj-box').classList.add('hidden');
+    }
+};
+
+// --- NOWE FUNKCJE POMOCNICZE UI ---
+
+function updateSingleElementInUI(data) {
+    const element = document.querySelector(`[data-id="${data.id}"]`);
+    if (element) {
+        // Podmieniamy środek karty
+        element.innerHTML = createCardContentHTML(data);
+
+        // Ponowne odpalenie ładowania zdjęcia, jeśli typ to obraz
+        const isImage = data.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(data.content || '');
+        if (isImage) {
+            loadImagesInBackground([data]);
+        }
+
+        // Efekt wizualny "mignięcia"
+        element.style.transition = 'background-color 0.5s';
+        element.style.backgroundColor = 'rgba(252, 211, 84, 0.1)';
+        setTimeout(() => element.style.backgroundColor = '', 1000);
+    }
+}
+
+function prependSingleElementToUI(data) {
+    const container = document.getElementById('feed-container');
+    if (!container) return;
+
+    const div = document.createElement('div');
+    div.setAttribute('data-id', data.id);
+    div.className = "item-card p-6 flex flex-col group transition-all";
+    div.style.borderRadius = "var(--global-radius)";
+    div.onclick = () => window.openEditor(data.id);
+    div.innerHTML = createCardContentHTML(data);
+
+    container.prepend(div);
+
+    const isImage = data.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(data.content || '');
+    if (isImage) {
+        loadImagesInBackground([data]);
+    }
+}
+
+function removeElementFromUI(id) {
+    const element = document.querySelector(`[data-id="${id}"]`);
+    if (element) {
+        element.style.transform = 'scale(0.95)';
+        element.style.opacity = '0';
+        setTimeout(() => element.remove(), 300);
+    }
+}
+// --- ZMIANA: Obsługa filtrów z użyciem zmiennych CSS ---
+document.querySelectorAll('.view-filter').forEach(btn => {
+    btn.onclick = () => {
+        // Usuń klasę aktywną ze wszystkich (zakładamy, że klasa to np. 'active-filter')
+        document.querySelectorAll('.view-filter').forEach(b => {
+            b.classList.remove('bg-white/10', 'text-white');
+            b.classList.add('text-gray-400');
+        });
+
+        // Dodaj klasę do klikniętego - tutaj używamy klasy, która w CSS ma ustawiony kolor ze zmiennej
+        btn.classList.remove('text-gray-400');
+        btn.classList.add('bg-white/10', 'text-white');
+
+        // Zmień filtr i odśwież feed
+        activeTypeFilter = btn.dataset.type;
+        renderFeed();
+    };
+});
+
+function renderSidebar() {
+    const container = document.getElementById('project-nav');
+    if (!container) return;
+
+    const rootFolders = collections.filter(c => !c.parentId || c.parentId === 'global');
+
+    const countAll = document.getElementById('count-all');
+    if (countAll) countAll.innerText = items.length;
+
+    container.innerHTML = rootFolders.map(c => renderFolder(c)).join('');
+}
+
+function renderFolder(folder) {
+    const isOpen = expandedCollections.has(folder.id);
+    const subFolders = collections.filter(f => f.parentId === folder.id);
+    const isActive = activeCollection === folder.id;
+    const folderItems = items.filter(i => i.collectionId === folder.id);
+
+    const itemsHtml = folderItems.map(item => {
+        let iconHtml = ICONS.file;
+        if (item.type === 'link') {
+            // ZMIANA: rounded-sm -> style
+            iconHtml = item.linkData?.favicon
+                ? `<img src="${item.linkData.favicon}" style="border-radius: var(--global-radius);" class="w-4 h-4">`
+                : ICONS.link;
+        }
+
+        const isItemActive = currentEditId === item.id;
+        const displayTitle = (item.type === 'link' && item.linkData?.title)
+            ? item.linkData.title
+            : item.content;
+
+        const truncatedTitle = displayTitle.substring(0, 18) + (displayTitle.length > 18 ? '...' : '');
+
+        return `
+            <div class="nav-item-entry group/item ${isItemActive ? 'active-item' : ''}" onclick="event.stopPropagation(); window.openEditor('${item.id}')">
+                <span class="flex items-center w-4 h-4 justify-center">${iconHtml}</span>
+                <span class="truncate">${truncatedTitle}</span>
+            </div>
+            <div class="item-actions">
+                <button class="action-btn btn-fav-quick ${item.isFav ? 'text-amber-500 opacity-100' : ''}" 
+                        onclick="event.stopPropagation(); window.toggleFav('${item.id}', ${item.isFav})">
+                    ${ICONS.star}
+                </button>
+                <button class="action-btn btn-delete-quick" 
+                        onclick="event.stopPropagation(); window.quickDelete('${item.id}')">
+                    ${ICONS.delete}
+                </button>
+            </div>
+    `;
+    }).join('');
+
+    const folderIcon = folder.isAutoGenerated ? ICONS.folder : ICONS.folder;
+    // Jeśli chcesz użyć innej ikony dla "box", a nie masz jej w ICONS, 
+    // upewnij się, że dodałeś ją do obiektu ICONS na górze kodu.
+
+    return `
+    <div class="folder-group mb-2">
+        <div data-id="${folder.id}" class="collection-item group flex items-center justify-between p-3 text-[14px] font-semibold cursor-pointer transition-all ${isActive ? 'active-folder' : 'text-gray-400 hover:bg-white/5'}" 
+             style="border-radius: var(--global-radius);"
+             onclick="window.setCollection('${folder.id}')">
+            <div class="flex items-center gap-3 truncate">
+                <span class="coll-arrow ${isOpen ? 'open' : ''}" onclick="window.toggleExpand(event, '${folder.id}')">▶</span>
+                <span class="flex items-center gap-2 truncate">
+                    <span class="flex items-center justify-center w-4 h-4">${folderIcon}</span>
+                    ${folder.name.toUpperCase()}
+                </span>
+            </div>
+        </div>
+        ${isOpen ? `
+            <div class="sub-folder ml-4 border-l border-white/5">
+                ${subFolders.map(sf => renderFolder(sf)).join('')}
+                <div class="folder-items-container mt-2 mb-3">
+                    ${itemsHtml}
+                </div>
+            </div>
+        ` : ''}
+    </div>`;
+}
+
+// Globalna zmienna do śledzenia ile elementów już wyrenderowaliśmy
+let renderedCount = 0;
+const ITEMS_PER_BATCH = 15; // Ile elementów renderować na raz
+let allFilteredItems = []; // Zmienna pomocnicza do przechowywania przefiltrowanych danych
+// 1. GŁÓWNA FUNKCJA: Przygotowuje dane i czyści kontener
+function renderFeed() {
+    const container = document.getElementById('feed-container');
+    if (!container) return;
+
+    // Logika filtrowania
+    allFilteredItems = items.filter(i => {
+        const contentLower = (i.content || '').toLowerCase();
+        const matchSearch = contentLower.includes(searchQuery.toLowerCase());
+        const matchColl = activeCollection === 'all' ? true : (activeCollection === 'favs' ? i.isFav : i.collectionId === activeCollection);
+        const matchType = activeTypeFilter === 'all' ? true : i.type === activeTypeFilter;
+        return matchSearch && matchColl && matchType;
+    });
+
+    container.innerHTML = ''; // Czyścimy widok
+    renderedCount = 0;        // Resetujemy licznik partii
+
+    console.log(`%c 🚀 Start renderowania: znaleziono ${allFilteredItems.length} elementów`, "color: #4ea8de; font-weight: bold;");
+
+    renderBatch(); // Wywołujemy pierwszą partię
+}
+
+// 1. Funkcja generująca TYLKO środek karty (do wielokrotnego użytku)
+function createCardContentHTML(i) {
+    const pClass = i.priority === 'high' ? 'dot-high' : (i.priority === 'low' ? 'dot-low' : 'dot-med');
+    const isLink = i.type === 'link';
+    const isCode = i.type === 'code';
+    const isImage = i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || '');
+
+    // Ikony i podglądy kodu
+    let mainIconHtml = isCode ? '💻' : (i.type === 'file' ? '📄' : '📝');
+    if (isLink) {
+        mainIconHtml = (i.linkData && i.linkData.favicon)
+            ? `<img src="${i.linkData.favicon}" class="w-6 h-6 rounded-sm" loading="lazy">`
+            : '🔗';
+    }
+
+    let codePreviewHtml = isCode ? `
+        <div class="mt-3 p-4 border border-white/10 bg-[#1e1e1e] font-consolas text-[11px] whitespace-pre-wrap overflow-hidden max-h-40" style="border-radius: var(--global-radius);">
+            ${i.content}
+        </div>` : '';
+
+    let filePreviewHtml = '';
+    if (i.type === 'file') {
+        if (isImage) {
+            filePreviewHtml = `
+            <div id="bg-load-${i.id}" class="mt-3 overflow-hidden bg-white/5 border border-white/5 h-40 flex items-center justify-center" style="border-radius: var(--global-radius);">
+                <div class="w-4 h-4 border-2 border-white/20 border-t-white/80 rounded-full animate-spin"></div>
+            </div>`;
+        } else {
+            filePreviewHtml = `<div class="mt-3 p-4 bg-white/5 border border-dashed border-white/10 text-xs text-gray-500" style="border-radius: var(--global-radius);">Plik dokumentu</div>`;
+        }
+    }
+
+    // Dynamiczna logika przycisku
+    let actionBtnHtml = '';
+    const btnText = isLink ? 'Open Website' : 'Open File';
+    const btnUrl = isLink ? i.linkData?.fullUrl : i.fileUrl;
+
+    if (btnUrl) {
+        actionBtnHtml = `
+            <div class="mt-4">
+                <a href="${btnUrl}" target="_blank" onclick="event.stopPropagation()" class="action-btn-primary">
+                    <button class="btn-container relative flex items-center h-[44px] px-2 pl-7 bg-white text-black rounded-full border border-white/10 transition-all duration-700 expo-out hover:bg-[#f8f8f8] hover:shadow-[0_20px_40px_-10px_rgba(255,255,255,0.1)] active:scale-[0.95] active:shadow-inner overflow-hidden">
+                        <span class="relative z-10 text-[14px] font-medium tracking-tight transition-all duration-700 expo-out btn-container-hover:translate-x-2 btn-container-hover:mr-10 mr-8 select-none whitespace-nowrap">${btnText}</span>
+                        <div class="relative h-[38px] w-[38px] bg-black text-white rounded-full flex items-center justify-center transition-all duration-700 expo-out btn-container-hover:w-[52px] btn-container-hover:bg-indigo-600 shrink-0 overflow-hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 absolute transition-all duration-700 expo-out btn-container-hover:translate-x-10 btn-container-hover:-translate-y-10 btn-container-hover:opacity-0"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 absolute -translate-x-10 translate-y-10 opacity-0 transition-all duration-700 expo-out btn-container-hover:translate-x-0 btn-container-hover:translate-y-0 btn-container-hover:opacity-100 btn-container-hover:rotate-90"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                        </div>
+                    </button>
+                </a>
+            </div>`;
+    }
+
+    return `
+        <div class="card-priority-indicator ${pClass}"></div>
+        <div class="flex justify-between items-start mb-4">
+            <div class="w-10 h-10 bg-white/5 flex items-center justify-center text-lg rounded-lg">${mainIconHtml}</div>
+            <button class="text-xl ${i.isFav ? 'text-amber-500' : 'text-gray-600'}" onclick="event.stopPropagation(); window.toggleFav('${i.id}', ${i.isFav})">
+                ${i.isFav ? '⭐' : '☆'}
+            </button>
+        </div>
+        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">${i.type}</p>
+        <p class="text-sm font-semibold truncate mb-1 text-gray-200">
+            ${isLink && i.linkData?.title ? i.linkData.title : (isCode ? 'Fragment kodu' : i.content)}
+        </p>
+        ${filePreviewHtml}
+        ${codePreviewHtml}
+        ${actionBtnHtml}
+    `;
+}
+
+// 2. Główna funkcja renderująca partie elementów
+function renderBatch() {
+    const container = document.getElementById('feed-container'); // Sprawdź czy masz w HTML id="feed-items" czy "feed-container"
+    if (!container) return;
+
+    const nextBatch = allFilteredItems.slice(renderedCount, renderedCount + ITEMS_PER_BATCH);
+    if (nextBatch.length === 0) return;
+
+    const htmlBatch = nextBatch.map(i => {
+        return `
+        <div data-id="${i.id}" class="item-card p-6 flex flex-col group transition-all" style="border-radius: var(--global-radius);" onclick="window.openEditor('${i.id}')">
+            ${createCardContentHTML(i)}
+        </div>`;
+    }).join('');
+
+    container.insertAdjacentHTML('beforeend', htmlBatch);
+    renderedCount += nextBatch.length;
+
+    // Obsługa obrazów w tle
+    const imagesInThisBatch = nextBatch.filter(i => i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || ''));
+    if (imagesInThisBatch.length > 0) {
+        loadImagesInBackground(imagesInThisBatch);
+    }
+
+    // Inicjalizacja obserwatora dla Infinite Scroll
+    if (renderedCount < allFilteredItems.length && typeof createObserver === 'function') {
+        createObserver();
+    }
+}
+
+// 3. FUNKCJA TŁA: Pobiera zdjęcia i loguje PROCENTY w konsoli
+function loadImagesInBackground(imageItems) {
+    let loadedCount = 0;
+    const total = imageItems.length;
+
+    console.log(`%c 📥 Start pobierania mediów dla partii (0/${total})`, "color: #ffaa00;");
+
+    imageItems.forEach((item, index) => {
+        // Stagger: wysyłamy zapytania co 50ms, żeby nie zapchać kolejki przeglądarki
+        setTimeout(() => {
+            const placeholder = document.getElementById(`bg-load-${item.id}`);
+            if (!placeholder) {
+                updateProgress();
+                return;
+            }
+
+            const img = new Image();
+            img.src = item.fileUrl;
+            img.className = "w-full h-full object-cover opacity-0 transition-opacity duration-500";
+
+            img.onload = () => {
+                placeholder.innerHTML = '';
+                placeholder.appendChild(img);
+                setTimeout(() => img.style.opacity = "1", 20);
+                updateProgress();
+            };
+
+            img.onerror = () => {
+                placeholder.innerHTML = '<span class="text-[10px] text-red-400">Błąd pliku</span>';
+                updateProgress();
+            };
+        }, index * 50);
+    });
+
+    function updateProgress() {
+        loadedCount++;
+        const percent = Math.round((loadedCount / total) * 100);
+        console.log(`%c ⏳ Pobieranie plików: ${percent}% (${loadedCount}/${total})`, "color: #ffaa00;");
+
+        if (loadedCount === total) {
+            console.log("%c ✅ Wszystkie pliki z tej partii są gotowe!", "color: #70e000; font-weight: bold;");
+        }
+    }
+}
+
+// Funkcja obserwująca czy użytkownik dojechał do końca
+function createObserver() {
+    const container = document.getElementById('feed-container');
+    const items = container.querySelectorAll('.item-card');
+    const lastItem = items[items.length - 1];
+
+    if (!lastItem) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            observer.unobserve(lastItem); // Przestań obserwować stary ostatni element
+            renderBatch(); // Renderuj kolejną partię
+        }
+    }, { threshold: 0.5 }); // Wywołaj gdy 50% elementu jest widoczne
+
+    observer.observe(lastItem);
+}
+
+window.openEditor = (id) => {
+    currentEditId = id;
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    tempEditPrio = item.priority;
+
+    const editorAside = document.getElementById('editor-aside');
+    editorAside.classList.remove('translate-x-full');
+
+    // ZMIANA: rounded-2xl -> style
+    document.getElementById('editor-form').innerHTML = `
+        <div class="space-y-6">
+            <div>
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Priorytet Zasobu</p>
+                <div class="flex gap-4 bg-black/40 p-4 border border-white/5" style="border-radius: var(--global-radius);">
+                    <div class="priority-dot dot-low ${tempEditPrio === 'low' ? 'active' : ''}" onclick="window.setEditPrio('low')"></div>
+                    <div class="priority-dot dot-med ${tempEditPrio === 'med' ? 'active' : ''}" onclick="window.setEditPrio('med')"></div>
+                    <div class="priority-dot dot-high ${tempEditPrio === 'high' ? 'active' : ''}" onclick="window.setEditPrio('high')"></div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Treść</p>
+                <textarea id="edit-content" class="w-full h-64 bg-black/20 border border-white/5 p-4 text-sm font-mono outline-none resize-none" style="border-radius: var(--global-radius);">${item.content}</textarea>
+            </div>
+        </div>
+    `;
+    renderSidebar();
+};
+
+window.setEditPrio = (p) => {
+    tempEditPrio = p;
+    document.querySelectorAll('#editor-form .priority-dot').forEach(d => {
+        d.classList.toggle('active', d.classList.contains('dot-' + p));
+    });
+};
+
+document.getElementById('update-item-btn').onclick = async () => {
+    if (!currentEditId) return;
+    const btn = document.getElementById('update-item-btn');
+    const content = document.getElementById('edit-content').value;
+
+    btn.innerText = "ZAPISYWANIE...";
+    await updateDoc(doc(db, 'raindrop_items', currentEditId), {
+        content: content,
+        priority: tempEditPrio
+    });
+    btn.innerText = "ZAKTUALIZOWANO!";
+    setTimeout(() => { btn.innerText = "AKTUALIZUJ ZMIANY"; }, 2000);
+};
+
+document.getElementById('delete-item-btn').onclick = async () => {
+    if (!currentEditId) return;
+    if (confirm("Czy na pewno chcesz usunąć ten zasób?")) {
+        await deleteDoc(doc(db, 'raindrop_items', currentEditId));
+        document.getElementById('editor-aside').classList.add('translate-x-full');
+        currentEditId = null;
+    }
+};
+
+const isUrl = (string) => {
+    try { return new URL(string); } catch (_) { return false; }
+};
+
+document.getElementById('qa-save').onclick = async () => {
+    let content = document.getElementById('qa-content').value;
+    const tags = document.getElementById('qa-tags').value.split(',').map(t => t.trim());
+
+    if (qaType === 'code') {
+        content = autoTrimCode(content);
+    } else {
+        content = content.trim();
+    }
+
+    if (!content) return;
+
+    const user = auth.currentUser;
+    if (!user) return alert("Błąd autoryzacji - zaloguj się ponownie");
+
+    let finalType = qaType;
+    let linkMeta = {};
+
+    const urlData = isUrl(content);
+
+    if (qaType !== 'code' && qaType !== 'file') {
+        if (urlData) {
+            finalType = 'link';
+            const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${urlData.hostname}`;
+            linkMeta = {
+                title: urlData.hostname.replace('www.', ''),
+                favicon: faviconUrl,
+                fullUrl: content
+            };
+        } else if (content.includes('```') || (content.length > 100 && (content.includes('{') || content.includes('function')))) {
+            finalType = 'code';
+            content = autoTrimCode(content);
+        } else {
+            finalType = 'text';
+        }
+    } else if (urlData && qaType === 'link') {
+        const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${urlData.hostname}`;
+        linkMeta = {
+            title: urlData.hostname.replace('www.', ''),
+            favicon: faviconUrl,
+            fullUrl: content
+        };
+    }
+
+    try {
+        await addDoc(collection(db, 'raindrop_items'), {
+            content,
+            type: finalType,
+            priority: qaPrio,
+            tags: tags.filter(t => t !== ""),
+            linkData: linkMeta,
+            collectionId: activeCollection === 'all' || activeCollection === 'favs' ? 'global' : activeCollection,
+            isFav: false,
+            createdAt: serverTimestamp(),
+            userId: user.uid
+        });
+
+        document.getElementById('qa-content').value = '';
+        document.getElementById('qa-tags').value = '';
+
+        const quickAddWindow = document.getElementById('quick-add-window');
+        quickAddWindow.style.setProperty('display', 'none', 'important');
+
+        console.log("Pomyślnie zarchiwizowano jako: " + finalType);
+    } catch (error) {
+        console.error("Błąd podczas zapisywania:", error);
+        alert("Nie udało się zapisać: " + error.message);
+    }
+};
+
+function autoTrimCode(text) {
+    const lines = text.split('\n');
+    const nonEmptyLines = lines.filter(line => line.trim().length > 0);
+    if (nonEmptyLines.length === 0) return text.trim();
+
+    const minIndent = nonEmptyLines.reduce((min, line) => {
+        const match = line.match(/^(\s*)/);
+        const indent = match ? match[1].length : 0;
+        return indent < min ? indent : min;
+    }, Infinity);
+
+    return lines
+        .map(line => line.length >= minIndent ? line.slice(minIndent) : line)
+        .join('\n')
+        .trim();
+}
+
+document.querySelectorAll('#qa-prio-container .priority-dot').forEach(dot => {
+    dot.onclick = () => {
+        qaPrio = dot.dataset.prio;
+        document.querySelectorAll('#qa-prio-container .priority-dot').forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+    };
+});
+
+document.getElementById('file-input').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const user = auth.currentUser;
+    if (!user) return alert("Musisz być zalogowany, aby dodać plik!");
+
+    try {
+        console.log("Wysyłam plik...");
+        const storageRef = ref(storage, `users/${user.uid}/files/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+
+        await addDoc(collection(db, 'raindrop_items'), {
+            content: file.name,
+            fileUrl: url,
+            type: 'file',
+            priority: 'low',
+            tags: ['file'],
+            collectionId: activeCollection === 'all' || activeCollection === 'favs' ? 'global' : activeCollection,
+            isFav: false,
+            createdAt: serverTimestamp(),
+            userId: user.uid
+        });
+
+        alert("Plik wgrany pomyślnie!");
+        renderFeed();
+    } catch (error) {
+        console.error("Błąd Storage:", error);
+        alert("Błąd przesyłania: " + error.message);
+    }
+    e.target.value = '';
+};
+
+document.querySelectorAll('#qa-type-container .type-pill').forEach(pill => {
+    pill.onclick = () => {
+        qaType = pill.dataset.type;
+        const textarea = document.getElementById('qa-content');
+
+        document.querySelectorAll('#qa-type-container .type-pill').forEach(p => p.classList.remove('active-pill'));
+        pill.classList.add('active-pill');
+
+        if (qaType === 'code') {
+            textarea.style.fontFamily = '"Consolas", "Courier New", monospace';
+            textarea.style.backgroundColor = 'black';
+            textarea.placeholder = "// Wklej tutaj swój kod...";
+        } else {
+            textarea.style.fontFamily = 'sans-serif';
+            textarea.style.backgroundColor = '';
+            textarea.placeholder = "Co masz na myśli?";
+        }
+    };
+});
+
+const contextMenu = document.getElementById('context-menu');
+const cmOptions = document.getElementById('cm-options');
+let lastTargetId = null;
+
+const menuTemplates = {
+    collection: [
+        { label: 'Zmień nazwę', action: 'rename', icon: '✎' },
+        { label: 'Dodaj folder', action: 'add-sub', icon: '📁' },
+        { label: 'Usuń kolekcję', action: 'delete-coll', danger: true, icon: '🗑' }
+    ],
+    sidebar: [
+        { label: 'Nowa kolekcja', action: 'new-main', icon: '+' },
+        { label: 'Odśwież', action: 'refresh', icon: '↻' }
+    ]
+};
+
+async function handleContextAction(action, id) {
+    contextMenu.classList.add('hidden');
+    const docRef = doc(db, 'collections', id);
+
+    if (action === 'delete-coll' && id) {
+        if (confirm("Czy na pewno chcesz usunąć tę kolekcję? Tej operacji nie da się cofnąć.")) {
+            try {
+                await deleteDoc(docRef);
+                console.log("Kolekcja usunięta z serwera");
+            } catch (error) {
+                console.error("Błąd Firebase (usuwanie):", error);
+                alert("Nie masz uprawnień lub wystąpił błąd sieci.");
+            }
+        }
+    }
+    else if (action === 'rename' && id) {
+        const newName = prompt("Podaj nową nazwę dla tej kolekcji:");
+        if (newName && newName.trim() !== "") {
+            try {
+                await updateDoc(docRef, { name: newName.trim() });
+                console.log("Nazwa zaktualizowana w serwerze");
+            } catch (error) {
+                console.error("Błąd Firebase (zmiana nazwy):", error);
+                alert("Błąd podczas zmiany nazwy.");
+            }
+        }
+    }
+    else if (action === 'new-main') {
+        document.getElementById('new-proj-box').classList.remove('hidden');
+    }
+    else if (action === 'add-sub' && id) {
+        const subName = prompt("Podaj nazwę podfolderu:");
+        if (subName && subName.trim() !== "") {
+            try {
+                await addDoc(collection(db, 'collections'), {
+                    name: subName.trim(),
+                    userId: auth.currentUser.uid,
+                    parentId: id,
+                    createdAt: serverTimestamp(),
+                    isOpen: true
+                });
+                console.log("Dodano podfolder do:", id);
+            } catch (error) {
+                console.error("Błąd podczas dodawania podfolderu:", error);
+            }
+        }
+    }
+}
+
+document.querySelector('aside').addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const collElement = e.target.closest('.collection-item');
+    const type = collElement ? 'collection' : 'sidebar';
+    lastTargetId = collElement ? collElement.dataset.id : null;
+
+    cmOptions.innerHTML = '';
+    const options = menuTemplates[type];
+
+    options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = `cm-item ${opt.danger ? 'danger' : ''}`;
+        div.innerHTML = `<span>${opt.icon}</span> ${opt.label}`;
+        div.onclick = () => handleContextAction(opt.action, lastTargetId);
+        cmOptions.appendChild(div);
+    });
+
+    contextMenu.style.left = `${e.clientX}px`;
+    contextMenu.style.top = `${e.clientY}px`;
+    contextMenu.classList.remove('hidden');
+});
+
+document.addEventListener('click', (e) => {
+    if (!contextMenu.contains(e.target)) {
+        contextMenu.classList.add('hidden');
+    }
+});
+
+window.setCollection = (id) => { activeCollection = id; renderFeed(); renderSidebar(); };
+window.toggleExpand = (e, id) => { e.stopPropagation(); expandedCollections.has(id) ? expandedCollections.delete(id) : expandedCollections.add(id); renderSidebar(); };
+window.toggleFav = async (id, cur) => await updateDoc(doc(db, 'raindrop_items', id), { isFav: !cur });
+window.quickDelete = async (id) => {
+    if (confirm("Czy na pewno usunąć ten element?")) {
+        await deleteDoc(doc(db, 'raindrop_items', id));
+        if (currentEditId === id) {
+            document.getElementById('editor-aside').classList.add('translate-x-full');
+            currentEditId = null;
+        }
+    }
+};
+
+document.getElementById('close-editor').onclick = () => {
+    document.getElementById('editor-aside').classList.add('translate-x-full');
+    currentEditId = null;
+    renderSidebar();
+};
+
+document.getElementById('header-add-btn').onclick = () => document.getElementById('quick-add-window').classList.remove('hidden');
+document.getElementById('qa-close-x').onclick = () => document.getElementById('quick-add-window').classList.add('hidden');
+
+function makeDraggable(el, handle) {
+    let drag = false, ox, oy;
+    handle.onmousedown = (e) => {
+        drag = true;
+        ox = e.clientX - el.offsetLeft;
+        oy = e.clientY - el.offsetTop;
+        el.style.transition = 'none';
+    };
+    document.addEventListener('mousemove', (e) => {
+        if (drag) {
+            el.style.left = (e.clientX - ox) + 'px';
+            el.style.top = (e.clientY - oy) + 'px';
+            el.style.right = 'auto';
+        }
+    });
+    document.addEventListener('mouseup', () => {
+        drag = false;
+        el.style.transition = 'opacity 0.3s ease';
+    });
+}
+makeDraggable(document.getElementById('quick-add-window'), document.getElementById('qa-header'));
+makeDraggable(document.getElementById('editor-aside'), document.getElementById('editor-header'));
+
+document.getElementById('nav-all').onclick = () => window.setCollection('all');
+document.getElementById('nav-favs').onclick = () => window.setCollection('favs');
+document.getElementById('global-search').oninput = (e) => { searchQuery = e.target.value; renderFeed(); };
+
+// --- ZAAWANSOWANA LOGIKA USTAWIEŃ ---
+const settingsModal = document.getElementById('settings-modal');
+const settingsBtn = document.getElementById('settings-btn');
+const closeSettingsBtn = document.getElementById('close-settings-full');
+const saveChangesBtn = document.getElementById('save-changes');
+const settingsNavItems = document.querySelectorAll('.settings-nav-item');
+const settingsSections = document.querySelectorAll('.settings-content');
+const customColorPicker = document.getElementById('custom-color-picker');
+
+let selectedAccentColor = "#2563eb";
+
+if (settingsBtn) {
+    settingsBtn.onclick = () => {
+        settingsModal.classList.remove('hidden');
+        settingsModal.classList.add('flex');
+        loadUserSettings();
+    };
+}
+const closeModal = () => {
+    settingsModal.classList.add('hidden');
+    settingsModal.classList.remove('flex');
+};
+if (closeSettingsBtn) closeSettingsBtn.onclick = closeModal;
+settingsModal.onclick = (e) => { if (e.target === settingsModal) closeModal(); };
+
+settingsNavItems.forEach(item => {
+    item.onclick = () => {
+        const targetSection = item.getAttribute('data-section');
+        settingsNavItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+        settingsSections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== `settings-section-${targetSection}`);
+        });
+    };
+});
+
+function updateAccentUI(color) {
+    document.querySelectorAll('.accent-picker').forEach(btn => {
+        const isSelected = btn.getAttribute('data-color') === color;
+        const icon = btn.querySelector('svg');
+        if (isSelected) {
+            btn.classList.add('border-white');
+            btn.classList.remove('border-transparent');
+            if (icon) { icon.classList.remove('opacity-0'); icon.classList.add('opacity-100'); }
+        } else {
+            btn.classList.remove('border-white');
+            btn.classList.add('border-transparent');
+            if (icon) { icon.classList.remove('opacity-100'); icon.classList.add('opacity-0'); }
+        }
+    });
+}
+
+document.querySelectorAll('.accent-picker').forEach(button => {
+    button.onclick = function () {
+        selectedAccentColor = this.getAttribute('data-color');
+        updateAccentUI(selectedAccentColor);
+
+        if (customColorPicker) customColorPicker.value = selectedAccentColor;
+
+        // Aplikujemy kolor do CSS
+        applyPrimaryColor(selectedAccentColor);
+
+        window.autoSaveSettings();
+    };
+});
+
+function updateRadius(value) {
+    document.documentElement.style.setProperty('--global-radius', value + 'px');
+    autoSaveSettings();
+}
+
+function applyPrimaryColor(color) {
+    const root = document.documentElement;
+
+    // 1. Ustawiamy główny kolor
+    root.style.setProperty('--primary-color', color);
+
+    // 2. Obliczamy kolor tekstu kontrastującego
+    const textColor = getContrastColor(color);
+    root.style.setProperty('--primary-text-color', textColor); // DODAJEMY TĘ ZMIENNĄ
+
+    // 3. Obliczamy i ustawiamy kolor hover
+    const hoverColor = `color-mix(in srgb, ${color}, black 15%)`;
+    root.style.setProperty('--primary-hover', hoverColor);
+
+    // 4. Inne pochodne kolory
+    const lightColor = `color-mix(in srgb, ${color}, white 90%)`;
+    root.style.setProperty('--primary-light', lightColor);
+    root.style.setProperty('--primary-dim', `color-mix(in srgb, ${color}, transparent 80%)`);
+
+    // 5. Zapisujemy kolor ringu
+    root.style.setProperty('--primary-ring', color + '33');
+}
+
+function getContrastColor(hexColor) {
+    // Usuń '#' jeśli jest
+    const hex = hexColor.replace('#', '');
+
+    // Konwersja hex na RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Obliczenie luminancji (wzór W3C)
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+    // Jeśli jasność > 128, kolor jest jasny -> zwróć czarny, w przeciwnym razie biały
+    return (yiq >= 128) ? '#000000' : '#ffffff';
+}
+
+window.autoSaveSettings = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // Pobieramy kolor albo z przycisków, albo z custom pickera
+    const currentColor = customColorPicker ? customColorPicker.value : selectedAccentColor;
+
+    const settingsData = {
+        displayName: document.getElementById('settings-display-name')?.value || "",
+        language: document.getElementById('settings-language')?.value || "pl",
+        notifications: document.getElementById('push-notifications')?.checked || false,
+        // ZMIANA: Zapisujemy kolor z custom pickera
+        accentColor: currentColor,
+        uiOpacity: document.getElementById('ui-opacity')?.value || "90",
+        uiRadius: document.getElementById('ui-radius')?.value || "12",
+        systemVolume: document.getElementById('system-volume')?.value || "80",
+        soundEffects: document.getElementById('sound-effects')?.checked || false,
+        animations: document.getElementById('enable-animations')?.checked || false,
+        gpuAcceleration: document.getElementById('gpu-acceleration')?.checked || false,
+        privateMode: document.getElementById('private-mode')?.checked || false,
+        debugMode: document.getElementById('debug-mode')?.checked || false,
+        customApiUrl: document.getElementById('api-custom-url')?.value || "",
+        updatedAt: serverTimestamp()
+    };
+
+    try {
+        await setDoc(doc(db, "users", user.uid), { settings: settingsData }, { merge: true });
+        applyInstantChanges(settingsData);
+    } catch (err) { console.error("Błąd zapisu:", err); }
+};
+
+// --- 4. FUNKCJA ŁADOWANIA DANYCH ---
+// --- 4. PEŁNA FUNKCJA ŁADOWANIA DANYCH ---
+async function loadUserSettings() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+        // 1. Pobierz dane (to musi poczekać, ale robimy to w tle)
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            const s = data.settings || {};
+
+            // 2. Używamy requestAnimationFrame, aby przeglądarka nie zacięła się
+            // przy aktualizacji kilkudziesięciu elementów DOM naraz.
+            requestAnimationFrame(() => {
+                // --- KOSMETYKA DOM (Szybkie operacje) ---
+                if (document.getElementById('settings-display-name')) {
+                    document.getElementById('settings-display-name').value = s.displayName || "";
+                }
+                if (document.getElementById('settings-language')) {
+                    document.getElementById('settings-language').value = s.language || "pl";
+                }
+
+                // Checkboxy
+                const checks = {
+                    'push-notifications': s.notifications,
+                    'sound-effects': s.soundEffects,
+                    'enable-animations': s.animations,
+                    'gpu-acceleration': s.gpuAcceleration,
+                    'private-mode': s.privateMode,
+                    'debug-mode': s.debugMode
+                };
+                for (const [id, val] of Object.entries(checks)) {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = val ?? true;
+                }
+
+                // Suwaki i etykiety
+                updateSlider('ui-opacity', 'opacity-val', s.uiOpacity, 90, '%');
+                updateSlider('ui-radius', 'radius-val', s.uiRadius, 12, 'px');
+                updateSlider('system-volume', 'volume-val', s.systemVolume, 80, '%');
+
+                // Kolory
+                if (s.accentColor) {
+                    selectedAccentColor = s.accentColor;
+                    if (customColorPicker) customColorPicker.value = s.accentColor;
+                    updateAccentUI(s.accentColor);
+                    applyPrimaryColor(s.accentColor);
+                }
+
+                // 3. Dopiero teraz aplikujemy zmiany do CSS (to może być ciężkie)
+                applyInstantChanges(s);
+            });
+
+            console.log("Ustawienia wczytane i zsynchronizowane z UI");
+        }
+    } catch (err) {
+        console.error("Błąd podczas ładowania ustawień:", err);
+    }
+}
+
+// Funkcja pomocnicza, żeby nie powtarzać kodu dla suwaków
+function updateSlider(inputId, labelId, value, defaultValue, unit) {
+    const input = document.getElementById(inputId);
+    const label = document.getElementById(labelId);
+    const finalVal = value || defaultValue;
+    if (input) input.value = finalVal;
+    if (label) label.innerText = finalVal + unit;
+}
+
+function setVh() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setVh);
+setVh();
+
+// Zoptymalizowana funkcja applyInstantChanges
+function applyInstantChanges(s) {
+    if (!s || typeof s !== 'object') return;
+    const root = document.documentElement;
+
+    // Używamy requestAnimationFrame, aby zmiany w CSS działy się 
+    // w płynny sposób, nie blokując renderowania.
+    requestAnimationFrame(() => {
+
+        // 1. KOLORY (Accent)
+        if (s.accentColor) {
+            applyPrimaryColor(s.accentColor);
+        }
+
+        // 2. RADIUS (Zaokrąglenie)
+        if (s.uiRadius !== undefined) {
+            root.style.setProperty('--global-radius', s.uiRadius + 'px');
+            // Zaktualizuj etykietę tylko jeśli użytkownik jest w ustawieniach
+            const radiusDisplay = document.getElementById('radius-val');
+            if (radiusDisplay) radiusDisplay.innerText = s.uiRadius + 'px';
+        }
+
+        // 3. DYNAMICZNE OPACITY I BLUR
+        if (s.uiOpacity !== undefined) {
+            const opacityValue = s.uiOpacity / 100;
+            // Obliczamy blur tylko raz
+            const blurValue = opacityValue * 16;
+
+            // Używamy zmiennych CSS bezpośrednio na root, żeby działało wszędzie,
+            // nie tylko na modalElement (chyba że celowo ma być tylko na modalu)
+            root.style.setProperty('--ui-opacity', opacityValue);
+            root.style.setProperty('--ui-blur', `${blurValue}px`);
+
+            const opacityDisplay = document.getElementById('opacity-val');
+            if (opacityDisplay) opacityDisplay.innerText = s.uiOpacity + '%';
+        }
+
+        // 4. DISPLAY NAME
+        if (s.displayName) {
+            const uiName = document.getElementById('user-display-name');
+            if (uiName) uiName.textContent = s.displayName;
+        }
+    });
+}
+
+document.getElementById('ui-opacity')?.addEventListener('input', (e) => {
+    applyInstantChanges({ uiOpacity: e.target.value });
+});
+
+if (saveChangesBtn) {
+    saveChangesBtn.onclick = async () => {
+        const btn = saveChangesBtn;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "sync...";
+        await window.autoSaveSettings();
+        setTimeout(() => { btn.innerHTML = originalText; }, 1000);
+    };
+}
+
+if (customColorPicker) {
+    customColorPicker.addEventListener('input', (e) => {
+        const color = e.target.value;
+        // Zastosuj kolor natychmiast
+        applyPrimaryColor(color);
+        // Zaktualizuj UI przycisków (opcjonalnie, zdejmuje aktywność z innych)
+        updateAccentUI(color);
+        // Automatyczny zapis
+        window.autoSaveSettings();
+    });
+}
+document.getElementById('ui-radius')?.addEventListener('input', (e) => applyInstantChanges({ uiRadius: e.target.value }));
+document.getElementById('ui-opacity')?.addEventListener('input', (e) => applyInstantChanges({ uiOpacity: e.target.value }));
+
+// Funkcja inicjalizująca menu
+function initMobileMenu() {
+    const sidebar = document.querySelector('.sidebar-container');
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+
+    if (!sidebar || !toggleBtn) return;
+
+    // Dodaj przycisk X do sidebaru, jeśli go nie ma
+    if (!document.querySelector('.mobile-close-btn')) {
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '✕';
+        closeBtn.className = 'mobile-close-btn md:hidden';
+        sidebar.prepend(closeBtn); // Dodaj na samą górę sidebaru
+
+        closeBtn.onclick = () => {
+            sidebar.classList.remove('mobile-open');
+        };
+    }
+
+    // Otwieranie hamburgerem
+    toggleBtn.onclick = (e) => {
+        e.preventDefault();
+        sidebar.classList.add('mobile-open');
+    };
+
+    // Zamykanie po kliknięciu w dowolny przycisk wewnątrz sidebaru (opcjonalne)
+    sidebar.querySelectorAll('button:not(.mobile-close-btn)').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    });
+}
+
+// Uruchom po załadowaniu DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+} else {
+    initMobileMenu();
+}
