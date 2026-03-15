@@ -14,20 +14,20 @@
     <div
         style="background: var(--bg-card); border: 1px solid var(--border-medium); padding: 40px; border-radius: calc(var(--global-radius) * 1.5); width: 100%; max-width: 400px;">
         <h1 style="text-align: center; font-weight: bold; margin-bottom: 20px; color: var(--text-main);">
-            $t('architect_pro')
+            <!-- $t('architect_pro') --> Architect Pro
         </h1>
         <div style="display: flex; flex-direction: column; gap: 15px;">
             <input type="email" id="auth-email" placeholder="$t('email')" class="input-base" style="width: 100%">
             <input type="password" id="auth-password" placeholder="$t('haslo')" class="input-base" style="width: 100%">
             <div class="flex flex-col gap-3 w-full">
                 <button id="btn-login" style="border-radius: var(--global-radius);"
-                    class="w-full bg-[var(--primary-color)] p-3 font-bold text-white">$t('login')</button>
+                    class="w-full bg-[var(--primary-color)] p-3 font-bold text-white">Login</button>
                 <button id="register-btn" style="border-radius: var(--global-radius);"
-                    class="w-full bg-[#1c1c1e] p-3 font-bold hidden text-white">$t('no_account')</button>
+                    class="w-full bg-[#1c1c1e] p-3 font-bold hidden text-white">Don't have an account? Register</button>
 
                 <p id="toggle-auth"
                     class="text-center text-xs text-[var(--text-muted)] cursor-pointer hover:text-white mt-2">
-                    $t('no_account')
+                    Don't have an account? Register
                 </p>
 
                 <button id="google-login-btn"
@@ -50,7 +50,7 @@
                     </svg>
                 </div>
                 <div class="flex items-center">
-                    $t('continue_google')
+                    Continue with Google
                 </div>
                 </button>
             </div>
@@ -69,13 +69,13 @@
             </div>
             <span id="user-display-name"
                 class="font-bold tracking-tighter text-[var(--text-main)] uppercase text-[12px] tracking-[0.25em] truncate">
-                $t('loading')
+                Loading...
             </span>
         </div>
 
         <button id="btn-new-coll" style="border-radius: calc(var(--global-radius) * 0.75);"
             class="w-full py-4 bg-[var(--primary-color)] text-[var(--primary-text-color)] text-[12px] font-black mb-8 hover:bg-[var(--primary-hover)] transition-all shadow-xl">
-            $t('new_collection')
+            New Collection
         </button>
         <div id="new-proj-box" class="hidden mb-6"><input id="proj-name-in" type="text" class="input-base w-full"
                 placeholder="$t('name_and_enter')"></div>
@@ -85,7 +85,7 @@
                 class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
                 <div class="flex items-center gap-4">
                     <div>
-                        $t('all')
+                        All
                     </div>
                     <span id="icon-all" class="flex items-center justify-center w-4 h-4"></span>
                 </div>
@@ -93,13 +93,13 @@
             </button>
             <button id="nav-favs" style="border-radius: calc(var(--global-radius) * 0.75);"
                 class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
-                <div class="flex items-center gap-3"><span>key</span> $t('favorites')</div>
+                <div class="flex items-center gap-3">Favorites</div>
             </button>
         </nav>
 
         <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <div class="text-[10px] text-[var(--text-muted)] font-bold tracking-widest uppercase mb-6 px-3">
-                $t('db_structure')
+                Database structure
             </div>
             <div id="project-nav" class="space-y-2"></div>
         </div>
@@ -243,7 +243,7 @@
                                 shadow-[inset_0_1px_0_0_#fff,0_1px_3px_rgba(0,0,0,0.1)]
                                 group-hover:-translate-y-1 group-active:translate-y-0
                                 transition-all duration-150 ease-out">
-                        $t('login')
+                        Login
                     </span>
                 </button>
             </div>
@@ -253,7 +253,7 @@
     <main class="flex flex-col relative">
         <header
             class="main-site-top-header py-4 border-b border-[var(--border-light)] flex flex-wrap md:flex-nowrap gap-3 items-center bg-[var(--bg)]/80 backdrop-blur-md sticky top-0 z-20">
-            <input type="text" id="global-search" placeholder="$t('search_placeholder')"
+            <input type="text" id="global-search" placeholder="Search for resources or tags..."
                 style="border-radius: calc(var(--global-radius) * 1.5);"
                 class="flex-1 bg-white/[0.03] border border-[var(--border-medium)] py-3 px-7 text-sm outline-none focus:border-blue-500/50 text-[var(--text-main)] md:flex-1 order-2 md:order-1">
 

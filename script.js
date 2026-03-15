@@ -556,12 +556,22 @@ onAuthStateChanged(auth, async (user) => {
         if (logoutBtn) logoutBtn.style.display = '';
         if (loginTrigger) loginTrigger.style.display = 'none';
 
-        // Obsługa wylogowania
         if (logoutBtn) {
-            logoutBtn.onclick = () => {
-                const confirmLogout = confirm("Are you sure you want to log out ? ");
-                if (confirmLogout) {
-                    signOut(auth);
+            logoutBtn.onclick = async () => {
+                try {
+                    // 1. Wylogowanie z Firebase
+                    await signOut(auth);
+
+                    // 2. Czyszczenie danych z localStorage (jeśli tam przechowujesz ustawienia)
+                    localStorage.clear();
+
+                    // 3. "Micro odświeżenie" - przeładowanie strony, co czyści zmienne w pamięci JS
+                    window.location.reload();
+
+                    console.log("Wylogowano pomyślnie i zresetowano stan.");
+                } catch (err) {
+                    console.error("Błąd podczas wylogowywania:", err);
+                    alert("Wystąpił błąd podczas wylogowywania.");
                 }
             };
         }
