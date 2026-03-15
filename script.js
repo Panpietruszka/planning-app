@@ -55,17 +55,195 @@ if (loginBtn) {
     loginBtn.onclick = async () => {
         const email = document.getElementById('auth-email').value;
         const pass = document.getElementById('auth-password').value;
-        if (!email || !pass) return alert("Wpisz e-mail i hasło!");
+        if (!email || !pass) return alert("Enter your email and password!");
 
         try {
             await signInWithEmailAndPassword(auth, email, pass);
-            console.log("Zalogowano pomyślnie!");
+            console.log("You have logged in successfully!");
         } catch (err) {
-            if (err.code === 'auth/user-not-found') alert("Nie ma takiego użytkownika. Kliknij Zarejestruj!");
-            else if (err.code === 'auth/wrong-password') alert("Błędne hasło!");
+            if (err.code === 'auth/user-not-found') alert("No such user exists.Click Register!");
+            else if (err.code === 'auth/wrong-password') alert("Incorrect password!");
             else alert("Błąd: " + err.message);
         }
     };
+}
+
+const i18n = {
+    pl: {
+        "app_title": "Architect Pro | Visual Hierarchy Edition",
+        "architect_pro": "Architect Pro",
+        "email": "Email",
+        "haslo": "Hasło",
+        "nowa-kolekcja": "Nowa Kolekcja",
+        "no_account": "Nie masz konta? Zarejestruj się",
+        "continue_google": "Continue with Google",
+        "loading": "Ładowanie...",
+        "new_collection": "+ NOWA KOLEKCJA",
+        "name_and_enter": "Nazwa i Enter...",
+        "all": "Wszystkie",
+        "favorites": "Ulubione",
+        "db_structure": "Struktura bazy",
+        "logout": "Wyloguj",
+        "login": "Zaloguj",
+        "search_placeholder": "Szukaj zasobów lub tagów...",
+        "file": "Plik",
+        "add_new": "Dodaj nowy",
+        "resource_editor": "Edytor Zasobu",
+        "close": "Zamknij",
+        "update_changes": "AKTUALIZUJ ZMIANY",
+        "delete_permanently": "USUŃ TRWALE",
+        "power_add_engine": "Power Add Engine",
+        "resource_type": "Typ Zasobu",
+        "content_placeholder": "Wpisz treść, notatkę lub wklej link...",
+        "tags_placeholder": "Tagi (po przecinku)...",
+        "archive_in_db": "Archiwizuj w bazie",
+        "system": "System",
+        "configuration": "Configuration",
+        "main_settings": "Główne",
+        "personalization": "Personalizacja",
+        "sound": "Dźwięk",
+        "performance": "Wydajność",
+        "security": "Bezpieczeństwo",
+        "developer": "Deweloper",
+        "back": "Powrót",
+        "save": "Zapisz",
+        "manage_profile": "Zarządzaj podstawową tożsamością swojego profilu.",
+        "display_name": "Nazwa wyświetlana",
+        "your_name": "Twoje imię...",
+        "push_notifications": "Powiadomienia push",
+        "system_language": "Język Systemowy",
+        "appearance": "Wygląd",
+        "ui_opacity": "Przezroczystość UI",
+        "corner_radius": "Zaokrąglenie rogów",
+        "all_filter": "ALL",
+        "links_filter": "LINKS",
+        "files_filter": "FILES",
+        "note_type": "NOTE",
+        "code_type": "CODE",
+        "system_volume": "Głośność Systemowa",
+        "manage_audio": "Zarządzaj audio i efektami dźwiękowymi.",
+        "ui_effects": "Efekty interfejsu"
+    },
+    en: {
+        "app_title": "Architect Pro | Visual Hierarchy Edition",
+        "architect_pro": "Architect Pro",
+        "email": "E-mail",
+        "haslo": "Password",
+        "no_account": "Don't have an account? Register",
+        "continue_google": "Continue with Google",
+        "loading": "Loading...",
+        "new_collection": "NEW COLLECTION",
+        "name_and_enter": "Name and Enter...",
+        "all": "All",
+        "favorites": "Favorite",
+        "db_structure": "Database structure",
+        "logout": "Log out",
+        "login": "Log in",
+        "search_placeholder": "Search for resources or tags...",
+        "file": "File",
+        "add_new": "Add new",
+        "resource_editor": "Resource Editor",
+        "close": "Close",
+        "update_changes": "UPDATE CHANGES",
+        "delete_permanently": "PERMANENTLY DELETE",
+        "power_add_engine": "Power Add Engine",
+        "resource_type": "Resource Type",
+        "content_placeholder": "Enter content, note or paste link...",
+        "tags_placeholder": "Tags (comma separated)...",
+        "archive_in_db": "Archive in the database",
+        "system": "System",
+        "configuration": "Configuration",
+        "main_settings": "Main",
+        "personalization": "Personalization",
+        "sound": "Sound",
+        "performance": "Efficiency",
+        "security": "Security",
+        "developer": "Developer",
+        "back": "Return",
+        "save": "Save",
+        "manage_profile": "Manage the primary identity of your profile.",
+        "display_name": "Display name",
+        "your_name": "Your name...",
+        "push_notifications": "Push notifications",
+        "system_language": "System Language",
+        "appearance": "Appearance",
+        "ui_opacity": "UI transparency",
+        "corner_radius": "Rounding the corners",
+        "all_filter": "ALL",
+        "links_filter": "LINKS",
+        "files_filter": "FILES",
+        "note_type": "NOTE",
+        "code_type": "CODE"
+    }
+};
+
+// Automatyczne wykrywanie języka
+let currentLang = navigator.language.startsWith('en') ? 'en' : 'pl';
+
+function translatePage() {
+    const translations = i18n[currentLang];
+    if (!translations) return;
+
+    // Przeszukujemy wszystkie elementy, które mogą zawierać tekst lub klucz
+    const allElements = document.querySelectorAll('*');
+
+    allElements.forEach(el => {
+
+        let key = el.getAttribute('data-i18n-key');
+        
+        if (!key && el.childNodes.length > 0) {
+            // Szukamy klucza wewnątrz tekstu tylko przy pierwszym uruchomieniu
+            el.childNodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.includes("$t(")) {
+                    const match = node.textContent.match(/\$t\(['"](.+?)['"]\)/);
+                    if (match) {
+                        key = match[1];
+                        el.setAttribute('data-i18n-key', key);
+                    }
+                }
+            });
+        }
+
+        // Jeśli mamy klucz, czyścimy element i wstawiamy TYLKO nowe tłumaczenie
+        if (key && translations[key]) {
+            // Używamy textContent, aby usunąć wszystko co było wcześniej i wstawić czysty tekst
+            el.textContent = translations[key];
+        }
+
+        // --- LOGIKA DLA PLACEHOLDERÓW ---
+        if (el.placeholder) {
+            if (el.placeholder.includes("$t(")) {
+                const match = el.placeholder.match(/\$t\(['"](.+?)['"]\)/);
+                if (match) el.setAttribute('data-i18n-placeholder', match[1]);
+            }
+            const pKey = el.getAttribute('data-i18n-placeholder');
+            if (pKey && translations[pKey]) {
+                el.placeholder = translations[pKey];
+            }
+        }
+    });
+}
+
+// Przy starcie sprawdź, czy użytkownik już wcześniej zmieniał język
+const savedLang = localStorage.getItem('userLanguage');
+if (savedLang) {
+    currentLang = savedLang;
+}
+
+document.addEventListener('DOMContentLoaded', translatePage)
+
+function changeLanguage(langCode) {
+    // 1. Aktualizujemy globalną zmienną języka
+    currentLang = langCode;
+
+    // 2. (Opcjonalnie) Zapisujemy wybór w localStorage, 
+    // aby po zamknięciu i otwarciu rozszerzenia język został zapamiętany
+    localStorage.setItem('userLanguage', langCode);
+
+    // 3. Wywołujemy funkcję tłumaczącą, którą przygotowaliśmy wcześniej
+    translatePage();
+
+    console.log("Language changed to: " + langCode);
 }
 
 const googleBtn = document.getElementById('google-login-btn');
@@ -77,16 +255,11 @@ if (googleBtn) {
             // Jeśli e-mail istnieje, Firebase zaloguje użytkownika.
             // Jeśli nie istnieje, stworzy konto.
             await signInWithPopup(auth, provider);
-            console.log("Zalogowano przez Google!");
         } catch (err) {
-            console.error("Błąd logowania Google:", err);
-
-            // Jeśli użytkownik ma już konto na hasło, Firebase wyrzuci błąd
-            // 'auth/account-exists-with-different-credential'
             if (err.code === 'auth/account-exists-with-different-credential') {
-                alert("Ten e-mail jest już zarejestrowany hasłem. Zaloguj się hasłem, aby połączyć konta.");
+                alert("This email address is already registered with a password. Please log in with your password to link your accounts.");
             } else {
-                alert("Błąd logowania: " + err.message);
+                alert("Login error: " + err.message);
             }
         }
     };
@@ -101,11 +274,11 @@ if (registerBtn) {
 
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
-            alert("Konto utworzone pomyślnie! Zostajesz zalogowany.");
+            alert("Account created successfully! You are now logged in.");
         } catch (err) {
-            if (err.code === 'auth/email-already-in-use') alert("Ten e-mail jest już zajęty!");
-            else if (err.code === 'auth/weak-password') alert("Hasło musi mieć min. 6 znaków!");
-            else alert("Błąd rejestracji: " + err.message);
+            if (err.code === 'auth/email-already-in-use') alert("This email is already taken!");
+            else if (err.code === 'auth/weak-password') alert("The password must be at least 6 characters long!");
+            else alert("Registration error: " + err.message);
         }
     };
 }
@@ -342,7 +515,7 @@ function initAppForUser() {
 
         renderSidebar(); // Odśwież liczniki w sidebarze
     }, (error) => {
-        console.error("Błąd Snapshotu:", error);
+        console.error("Snapshot Error:", error);
     });
 
     // Ikona folderu
@@ -386,7 +559,7 @@ onAuthStateChanged(auth, async (user) => {
         // Obsługa wylogowania
         if (logoutBtn) {
             logoutBtn.onclick = () => {
-                const confirmLogout = confirm("Czy napewno chcesz się wylogować?");
+                const confirmLogout = confirm("Are you sure you want to log out ? ");
                 if (confirmLogout) {
                     signOut(auth);
                 }
@@ -416,12 +589,12 @@ onAuthStateChanged(auth, async (user) => {
         }
 
         // Reset danych widocznych dla gościa
-        if (userDisplayName) userDisplayName.textContent = "Gość";
+        if (userDisplayName) userDisplayName.textContent = "Guest";
         if (userAvatar) userAvatar.innerHTML = "";
 
         const feedContainer = document.getElementById('feed-container');
         if (feedContainer) {
-            feedContainer.innerHTML = '<p class="empty-state">Zaloguj się, aby zarządzać swoimi plikami.</p>';
+            feedContainer.innerHTML = '<p class="empty-state">Log in to manage your files.</p>';
         }
     }
     isInitialLoading = false;
@@ -446,17 +619,11 @@ document.getElementById('toggle-auth').onclick = () => {
     if (isLoginMode) {
         loginBtn.classList.remove('hidden');
         regBtn.classList.add('hidden');
-        toggleText.innerText = "Nie masz konta? Zarejestruj się";
+        toggleText.innerText = "Don't have an account? Sign up";
     } else {
         loginBtn.classList.add('hidden');
         regBtn.classList.remove('hidden');
-        toggleText.innerText = "Masz już konto? Zaloguj się";
-    }
-};
-
-document.getElementById('logout-btn').onclick = () => {
-    if (confirm("Czy na pewno chcesz się wylogować?")) {
-        signOut(auth).catch(err => console.error("Błąd wylogowania:", err));
+        toggleText.innerText = "Already have an account ? Log in ";
     }
 };
 document.getElementById('btn-new-coll').onclick = () => {
@@ -645,8 +812,6 @@ function renderFeed() {
     container.innerHTML = ''; // Czyścimy widok
     renderedCount = 0;        // Resetujemy licznik partii
 
-    console.log(`%c 🚀 Start renderowania: znaleziono ${allFilteredItems.length} elementów`, "color: #4ea8de; font-weight: bold;");
-
     renderBatch(); // Wywołujemy pierwszą partię
 }
 
@@ -712,7 +877,7 @@ function createCardContentHTML(i) {
         </div>
         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">${i.type}</p>
         <p class="text-sm font-semibold truncate mb-1 text-gray-200">
-            ${isLink && i.linkData?.title ? i.linkData.title : (isCode ? 'Fragment kodu' : i.content)}
+            ${isLink && i.linkData?.title ? i.linkData.title : (isCode ? 'Code snippet' : i.content)}
         </p>
         ${filePreviewHtml}
         ${codePreviewHtml}
@@ -755,8 +920,6 @@ function loadImagesInBackground(imageItems) {
     let loadedCount = 0;
     const total = imageItems.length;
 
-    console.log(`%c 📥 Start pobierania mediów dla partii (0/${total})`, "color: #ffaa00;");
-
     imageItems.forEach((item, index) => {
         // Stagger: wysyłamy zapytania co 50ms, żeby nie zapchać kolejki przeglądarki
         setTimeout(() => {
@@ -790,7 +953,7 @@ function loadImagesInBackground(imageItems) {
         console.log(`%c ⏳ Pobieranie plików: ${percent}% (${loadedCount}/${total})`, "color: #ffaa00;");
 
         if (loadedCount === total) {
-            console.log("%c ✅ Wszystkie pliki z tej partii są gotowe!", "color: #70e000; font-weight: bold;");
+
         }
     }
 }
@@ -826,7 +989,7 @@ window.openEditor = (id) => {
     document.getElementById('editor-form').innerHTML = `
         <div class="space-y-6">
             <div>
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Priorytet Zasobu</p>
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Resource Priority</p>
                 <div class="flex gap-4 bg-black/40 p-4 border border-white/5" style="border-radius: var(--global-radius);">
                     <div class="priority-dot dot-low ${tempEditPrio === 'low' ? 'active' : ''}" onclick="window.setEditPrio('low')"></div>
                     <div class="priority-dot dot-med ${tempEditPrio === 'med' ? 'active' : ''}" onclick="window.setEditPrio('med')"></div>
@@ -855,18 +1018,19 @@ document.getElementById('update-item-btn').onclick = async () => {
     const btn = document.getElementById('update-item-btn');
     const content = document.getElementById('edit-content').value;
 
-    btn.innerText = "ZAPISYWANIE...";
+    btn.innerText = "SAVING...";
     await updateDoc(doc(db, 'raindrop_items', currentEditId), {
         content: content,
         priority: tempEditPrio
     });
-    btn.innerText = "ZAKTUALIZOWANO!";
-    setTimeout(() => { btn.innerText = "AKTUALIZUJ ZMIANY"; }, 2000);
+    btn.innerText = "UPDATED!";
+    setTimeout(() => {
+        btn.innerText = "UPDATE CHANGES"; }, 2000);
 };
 
 document.getElementById('delete-item-btn').onclick = async () => {
     if (!currentEditId) return;
-    if (confirm("Czy na pewno chcesz usunąć ten zasób?")) {
+    if (confirm("Are you sure you want to delete this resource?")) {
         await deleteDoc(doc(db, 'raindrop_items', currentEditId));
         document.getElementById('editor-aside').classList.add('translate-x-full');
         currentEditId = null;
@@ -890,7 +1054,7 @@ document.getElementById('qa-save').onclick = async () => {
     if (!content) return;
 
     const user = auth.currentUser;
-    if (!user) return alert("Błąd autoryzacji - zaloguj się ponownie");
+    if (!user) return alert("Authorization error - please log in again");
 
     let finalType = qaType;
     let linkMeta = {};
@@ -940,10 +1104,10 @@ document.getElementById('qa-save').onclick = async () => {
         const quickAddWindow = document.getElementById('quick-add-window');
         quickAddWindow.style.setProperty('display', 'none', 'important');
 
-        console.log("Pomyślnie zarchiwizowano jako: " + finalType);
+        console.log("Successfully archived as: " + finalType);
     } catch (error) {
-        console.error("Błąd podczas zapisywania:", error);
-        alert("Nie udało się zapisać: " + error.message);
+        console.error("Error while saving: ", error);
+        alert("Failed to save: " + error.message);
     }
 };
 
@@ -977,10 +1141,10 @@ document.getElementById('file-input').onchange = async (e) => {
     if (!file) return;
 
     const user = auth.currentUser;
-    if (!user) return alert("Musisz być zalogowany, aby dodać plik!");
+    if (!user) return alert("You must be logged in to add a file!");
 
     try {
-        console.log("Wysyłam plik...");
+        console.log("I'm sending the file...");
         const storageRef = ref(storage, `users/${user.uid}/files/${file.name}`);
         const snapshot = await uploadBytes(storageRef, file);
         const url = await getDownloadURL(snapshot.ref);
@@ -997,11 +1161,11 @@ document.getElementById('file-input').onchange = async (e) => {
             userId: user.uid
         });
 
-        alert("Plik wgrany pomyślnie!");
+        alert("File uploaded successfully!");
         renderFeed();
     } catch (error) {
-        console.error("Błąd Storage:", error);
-        alert("Błąd przesyłania: " + error.message);
+        console.error("Storage error:", error);
+        alert("Upload error: " + error.message);
     }
     e.target.value = '';
 };
@@ -1047,25 +1211,25 @@ async function handleContextAction(action, id) {
     const docRef = doc(db, 'collections', id);
 
     if (action === 'delete-coll' && id) {
-        if (confirm("Czy na pewno chcesz usunąć tę kolekcję? Tej operacji nie da się cofnąć.")) {
+        if (confirm("Are you sure you want to delete this collection? This operation cannot be undone.")) {
             try {
                 await deleteDoc(docRef);
-                console.log("Kolekcja usunięta z serwera");
+                console.log("Collection deleted from server");
             } catch (error) {
-                console.error("Błąd Firebase (usuwanie):", error);
-                alert("Nie masz uprawnień lub wystąpił błąd sieci.");
+                console.error("Firebase error (deletion):", error);
+                alert("You do not have permission or a network error occurred.");
             }
         }
     }
     else if (action === 'rename' && id) {
-        const newName = prompt("Podaj nową nazwę dla tej kolekcji:");
+        const newName = prompt("Enter a new name for this collection:");
         if (newName && newName.trim() !== "") {
             try {
                 await updateDoc(docRef, { name: newName.trim() });
-                console.log("Nazwa zaktualizowana w serwerze");
+                console.log("Name updated on server");
             } catch (error) {
-                console.error("Błąd Firebase (zmiana nazwy):", error);
-                alert("Błąd podczas zmiany nazwy.");
+                console.error("Firebase error (rename):", error);
+                alert("Error while renaming.");
             }
         }
     }
@@ -1073,7 +1237,7 @@ async function handleContextAction(action, id) {
         document.getElementById('new-proj-box').classList.remove('hidden');
     }
     else if (action === 'add-sub' && id) {
-        const subName = prompt("Podaj nazwę podfolderu:");
+        const subName = prompt("Enter subfolder name:");
         if (subName && subName.trim() !== "") {
             try {
                 await addDoc(collection(db, 'collections'), {
@@ -1083,9 +1247,9 @@ async function handleContextAction(action, id) {
                     createdAt: serverTimestamp(),
                     isOpen: true
                 });
-                console.log("Dodano podfolder do:", id);
+                console.log("Subfolder added to:", id);
             } catch (error) {
-                console.error("Błąd podczas dodawania podfolderu:", error);
+                console.error("Error while adding subfolder:", error);
             }
         }
     }
@@ -1282,14 +1446,16 @@ window.autoSaveSettings = async () => {
     const user = auth.currentUser;
     if (!user) return;
 
-    // Pobieramy kolor albo z przycisków, albo z custom pickera
+    // Pobieramy język wybrany w select
+    const selectedLang = document.getElementById('settings-language')?.value || "pl";
+
+    // Pobieramy kolor (z pickera lub zmiennej)
     const currentColor = customColorPicker ? customColorPicker.value : selectedAccentColor;
 
     const settingsData = {
         displayName: document.getElementById('settings-display-name')?.value || "",
-        language: document.getElementById('settings-language')?.value || "pl",
+        language: selectedLang,
         notifications: document.getElementById('push-notifications')?.checked || false,
-        // ZMIANA: Zapisujemy kolor z custom pickera
         accentColor: currentColor,
         uiOpacity: document.getElementById('ui-opacity')?.value || "90",
         uiRadius: document.getElementById('ui-radius')?.value || "12",
@@ -1304,9 +1470,20 @@ window.autoSaveSettings = async () => {
     };
 
     try {
+        // Zapis do Firebase
         await setDoc(doc(db, "users", user.uid), { settings: settingsData }, { merge: true });
+
+        // --- KLUCZOWE: Zmiana języka na żywo ---
+        if (typeof currentLang !== 'undefined') {
+            currentLang = selectedLang; // Ustawienie globalnej zmiennej na nową wartość
+            translatePage(); // Uruchomienie tłumaczenia całego DOM
+        }
+        // ---------------------------------------
+
         applyInstantChanges(settingsData);
-    } catch (err) { console.error("Błąd zapisu:", err); }
+    } catch (err) {
+        console.error("Błąd zapisu ustawień:", err);
+    }
 };
 
 // --- 4. FUNKCJA ŁADOWANIA DANYCH ---
@@ -1503,3 +1680,14 @@ if (document.readyState === 'loading') {
 } else {
     initMobileMenu();
 }
+
+// Uruchom tłumaczenie, gdy strona się załaduje
+document.addEventListener('DOMContentLoaded', () => {
+    // Opcjonalnie: odczytaj język z pamięci przeglądarki
+    const savedLang = localStorage.getItem('userLanguage');
+    if (savedLang) {
+        currentLang = savedLang;
+    }
+
+    translatePage();
+});

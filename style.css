@@ -131,7 +131,7 @@ aside.sidebar-container {
     position: sticky;
     overflow-y: auto;
     top: 0;
-    height: 100vh;
+    height: 100dvh;
 }
 
 #context-menu {
@@ -917,7 +917,7 @@ input[type="range"]::-moz-range-thumb {
         padding-top: 50px;
     }
 
-    /* Ukrywamy logo/napis "System Configuration" na mobile, by oszczędzić miejsce */
+    /* Ukrywamy /napis "System Configuration" na mobile, by oszczędzić miejsce */
     #settings-modal aside>div:first-child {
         display: none;
     }

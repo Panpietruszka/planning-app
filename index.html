@@ -9,102 +9,108 @@
 </head>
 
 <body>
-    <div id="auth-overlay"
-        style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center;">
-        <div
-            style="background: var(--bg-card); border: 1px solid var(--border-medium); padding: 40px; border-radius: calc(var(--global-radius) * 1.5); width: 100%; max-width: 400px;">
-            <h1 style="text-align: center; font-weight: bold; margin-bottom: 20px; color: var(--text-main);">Architect
-                Pro
-            </h1>
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <input type="email" id="auth-email" placeholder="Email" class="input-base" style="width: 100%">
-                <input type="password" id="auth-password" placeholder="Hasło" class="input-base" style="width: 100%">
-                <div class="flex flex-col gap-3 w-full">
-                    <button id="btn-login" style="border-radius: var(--global-radius);"
-                        class="w-full bg-[var(--primary-color)] p-3 font-bold text-white">ZALOGUJ</button>
-                    <button id="register-btn" style="border-radius: var(--global-radius);"
-                        class="w-full bg-[#1c1c1e] p-3 font-bold hidden text-white">ZAREJESTRUJ</button>
+<div id="auth-overlay"
+    style="position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+    <div
+        style="background: var(--bg-card); border: 1px solid var(--border-medium); padding: 40px; border-radius: calc(var(--global-radius) * 1.5); width: 100%; max-width: 400px;">
+        <h1 style="text-align: center; font-weight: bold; margin-bottom: 20px; color: var(--text-main);">
+            $t('architect_pro')
+        </h1>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="email" id="auth-email" placeholder="$t('email')" class="input-base" style="width: 100%">
+            <input type="password" id="auth-password" placeholder="$t('haslo')" class="input-base" style="width: 100%">
+            <div class="flex flex-col gap-3 w-full">
+                <button id="btn-login" style="border-radius: var(--global-radius);"
+                    class="w-full bg-[var(--primary-color)] p-3 font-bold text-white">$t('login')</button>
+                <button id="register-btn" style="border-radius: var(--global-radius);"
+                    class="w-full bg-[#1c1c1e] p-3 font-bold hidden text-white">$t('no_account')</button>
 
-                    <p id="toggle-auth"
-                        class="text-center text-xs text-[var(--text-muted)] cursor-pointer hover:text-white mt-2">
-                        Nie masz konta? Zarejestruj się
-                    </p>
+                <p id="toggle-auth"
+                    class="text-center text-xs text-[var(--text-muted)] cursor-pointer hover:text-white mt-2">
+                    $t('no_account')
+                </p>
 
-                    <button id="google-login-btn"
-                        class="max-w-[320px] flex items-center gap-3 px-5.5 py-2 flex justify-center text-sm font-bold text-center uppercase align-middle rounded-lg border border-gray-500/25 text-white bg-gray-800 cursor-pointer transition-all duration-600 ease-in-out hover:scale-102 hover:bg-gray-700 hover:shadow-md hover:shadow-gray-700/10 focus:outline-none focus:ring-4 focus:ring-gray-900/30 active:scale-98 active:opacity-80 max-sm:max-w-full">
-                        <svg viewBox="0 0 256 262" preserveAspectRatio="xMidYMid" xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6 fill-white mr-2">
-                            <path
-                                d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                                fill="#4285F4"></path>
-                            <path
-                                d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                                fill="#34A853"></path>
-                            <path
-                                d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-                                fill="#FBBC05"></path>
-                            <path
-                                d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                                fill="#EB4335"></path>
-                        </svg>
-                        Continue with Google
-                    </button>
+                <button id="google-login-btn"
+                    class="max-w-[320px] flex items-center gap-3 px-5.5 py-2 flex justify-center text-sm font-bold text-center uppercase align-middle rounded-lg border border-gray-500/25 text-white bg-gray-800 cursor-pointer transition-all duration-600 ease-in-out hover:scale-102 hover:bg-gray-700 hover:shadow-md hover:shadow-gray-700/10 focus:outline-none focus:ring-4 focus:ring-gray-900/30 active:scale-98 active:opacity-80 max-sm:max-w-full">
+                    <div class="flex items-center">
+                    <svg viewBox="0 0 256 262" preserveAspectRatio="xMidYMid" xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 fill-white mr-2">
+                        <path
+                            d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                            fill="#4285F4"></path>
+                        <path
+                            d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                            fill="#34A853"></path>
+                        <path
+                            d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                            fill="#FBBC05"></path>
+                        <path
+                            d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                            fill="#EB4335"></path>
+                    </svg>
                 </div>
+                <div class="flex items-center">
+                    $t('continue_google')
+                </div>
+                </button>
             </div>
-            <p id="auth-error"
-                style="color: var(--danger); font-size: 12px; margin-top: 15px; text-align: center; display: none;"></p>
         </div>
+        <p id="auth-error"
+            style="color: var(--danger); font-size: 12px; margin-top: 15px; text-align: center; display: none;"></p>
     </div>
+</div>
 
-    <div class="app-layout">
-        <aside class="sidebar-container hidden md:flex md:flex-col md:w-64 bg-[var(--bg-card)] border-r border-[var(--border-light)] p-6">
-            <div class="flex items-center gap-3 mb-10">
-                <div id="user-avatar" style="border-radius: calc(var(--global-radius) * 0.75);"
-                    class="w-10 h-10 bg-[var(--primary-color)] shadow-lg overflow-hidden flex items-center justify-center">
-                </div>
-                <span id="user-display-name"
-                    class="font-bold tracking-tighter text-[var(--text-main)] uppercase text-[12px] tracking-[0.25em] truncate">
-                    Ładowanie...
-                </span>
+<div class="app-layout">
+<aside
+    class="sidebar-container hidden lg:flex lg:flex-col lg:w-72 md:flex md:flex-col md:w-64 bg-[var(--bg-card)] border-r border-[var(--border-light)] p-6 fixed top-0 left-0 h-full max-h-screen overflow-hidden z-50">
+        <div class="flex items-center gap-3 mb-10">
+            <div id="user-avatar" style="border-radius: calc(var(--global-radius) * 0.75);"
+                class="w-10 h-10 bg-[var(--primary-color)] shadow-lg overflow-hidden flex items-center justify-center">
             </div>
+            <span id="user-display-name"
+                class="font-bold tracking-tighter text-[var(--text-main)] uppercase text-[12px] tracking-[0.25em] truncate">
+                $t('loading')
+            </span>
+        </div>
 
-            <button id="btn-new-coll" style="border-radius: calc(var(--global-radius) * 0.75);"
-                class="w-full py-4 bg-[var(--primary-color)] text-[var(--primary-text-color)] text-[12px] font-black mb-8 hover:bg-[var(--primary-hover)] transition-all shadow-xl">
-                + NOWA KOLEKCJA
-            </button>
-            <div id="new-proj-box" class="hidden mb-6"><input id="proj-name-in" type="text" class="input-base w-full"
-                    placeholder="Nazwa i Enter..."></div>
+        <button id="btn-new-coll" style="border-radius: calc(var(--global-radius) * 0.75);"
+            class="w-full py-4 bg-[var(--primary-color)] text-[var(--primary-text-color)] text-[12px] font-black mb-8 hover:bg-[var(--primary-hover)] transition-all shadow-xl">
+            $t('new_collection')
+        </button>
+        <div id="new-proj-box" class="hidden mb-6"><input id="proj-name-in" type="text" class="input-base w-full"
+                placeholder="$t('name_and_enter')"></div>
 
-            <nav class="space-y-2 mb-10">
-                <button id="nav-all" style="border-radius: calc(var(--global-radius) * 0.75);"
-                    class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
-                    <div class="flex items-center gap-3">
-                        <span id="icon-all" class="flex items-center justify-center w-4 h-4"></span>
-                        Wszystkie
+        <nav class="space-y-2 mb-10">
+            <button id="nav-all" style="border-radius: calc(var(--global-radius) * 0.75);"
+                class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
+                <div class="flex items-center gap-4">
+                    <div>
+                        $t('all')
                     </div>
-                    <span id="count-all" class="text-[11px] opacity-40 font-mono text-[var(--text-main)]">0</span>
-                </button>
-                <button id="nav-favs" style="border-radius: calc(var(--global-radius) * 0.75);"
-                    class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
-                    <div class="flex items-center gap-3"><span>⭐</span> Ulubione</div>
-                </button>
-            </nav>
-
-            <div class="flex-1 overflow-y-auto">
-                <div class="text-[10px] text-[var(--text-muted)] font-bold tracking-widest uppercase mb-6 px-3">
-                    Struktura
-                    bazy
+                    <span id="icon-all" class="flex items-center justify-center w-4 h-4"></span>
                 </div>
-                <div id="project-nav" class="space-y-2"></div>
+                <span id="count-all" class="text-[11px] opacity-40 font-mono text-[var(--text-main)]">0</span>
+            </button>
+            <button id="nav-favs" style="border-radius: calc(var(--global-radius) * 0.75);"
+                class="w-full flex items-center justify-between p-3 text-[14px] font-medium text-[var(--text-muted)] hover:bg-[var(--border-light)] transition-colors">
+                <div class="flex items-center gap-3"><span>key</span> $t('favorites')</div>
+            </button>
+        </nav>
+
+        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <div class="text-[10px] text-[var(--text-muted)] font-bold tracking-widest uppercase mb-6 px-3">
+                $t('db_structure')
             </div>
-            <div class="mt-auto pt-6 flex items-center justify-between border-t border-[var(--border-light)]">
-                <div class="flex gap-2">
-                    <button id="settings-btn" style="border-radius: calc(var(--global-radius) * 0.5);"
-                        class="p-2 text-[var(--text-muted)] hover:text-white hover:bg-[var(--border-light)] transition-all duration-200">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20" height="20"
-                            viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
-                            <path fill="#A1A1AA" opacity="1.000000" stroke="none" d="
+            <div id="project-nav" class="space-y-2"></div>
+        </div>
+        <div class="mt-auto pt-6 flex items-center justify-between border-t border-[var(--border-light)]">
+            <div class="flex gap-2">
+                <button id="settings-btn" style="border-radius: calc(var(--global-radius) * 0.5);"
+                    class="p-2 text-[var(--text-muted)] hover:text-white hover:bg-[var(--border-light)] transition-all duration-200">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20" height="20"
+                        viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+                        <path fill="#A1A1AA" opacity="1.000000" stroke="none" d="
                         M202.000000,1.000001 
                             C238.354233,1.000000 274.708466,1.000000 311.188812,1.253099 
                             C312.943665,2.546662 314.467377,3.829512 316.218170,4.588343 
@@ -187,7 +193,7 @@
                             C63.070839,317.443970 56.551746,323.132996 49.749798,328.831787 
                             C55.071915,338.008606 60.291321,347.008362 65.936188,356.627014 
                         z" />
-                            <path fill="#A1A1AA" opacity="1.000000" stroke="none" d="
+                        <path fill="#A1A1AA" opacity="1.000000" stroke="none" d="
                         M352.332886,229.738434 
                             C355.262299,240.482941 356.562805,251.048111 355.988403,261.795624 
                             C354.822510,283.609100 347.560181,303.008514 333.594452,319.997284 
@@ -208,646 +214,611 @@
                             C201.294312,280.255127 208.817184,293.227722 221.341949,302.811218 
                             C229.075089,308.728333 237.571838,312.979187 248.131516,314.624023 
                         z" />
+                    </svg>
+                </button>
+
+                <button id="logout-btn" title="Wyloguj" class="group flex items-center justify-start w-8 h-8 border-none cursor-pointer relative overflow-hidden transition-all duration-300 shadow-md bg-red-500 hover:w-28 hover:rounded-lg active:translate-x-0.5 active:translate-y-0.5" style="border-radius: calc(var(--global-radius) * 0.35)">
+
+                    <div class="flex items-center justify-center w-8 transition-all duration-300 group-hover:w-1/3">
+                        <svg viewBox="0 0 512 512" class="w-3.5 h-3.5 fill-white">
+                            <path
+                                d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+                            </path>
                         </svg>
-                    </button>
+                    </div>
 
-                    <button id="logout-btn" title="Wyloguj"
-                        class="group flex items-center justify-start w-8 h-8 border-none cursor-pointer relative overflow-hidden transition-all duration-300 shadow-md bg-red-500 hover:w-28 hover:rounded-lg active:translate-x-0.5 active:translate-y-0.5"
-                        style="border-radius: calc(var(--global-radius) * 0.35)">
+                    <div class="opacity-0 w-0 translate-x-3 text-white text-sm font-semibold transition-all duration-300 group-hover:opacity-100 group-hover:w-2/3 group-hover:translate-x-0 whitespace-nowrap">
+                        Logout
+                    </div>
+                </button>
 
-                        <div
-                            class="sign w-full transition-all duration-300 flex items-center justify-center group-hover:w-[30%] group-hover:pl-2">
-                            <svg viewBox="0 0 512 512" class="w-3.5 h-3.5 fill-white">
-                                <path
-                                    d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
-                                </path>
-                            </svg>
-                        </div>
+                <button id="btn-login-trigger"
+                    class="group relative cursor-pointer outline-none border-none bg-transparent p-0 transition-all duration-150 active:translate-y-1 w-20">
+                    <span class="absolute top-0 left-0 w-full h-full rounded-xl bg-stone-400 translate-y-1"></span>
 
-                        <div
-                            class="text absolute right-0 w-0 opacity-0 text-white text-sm font-semibold transition-all duration-300 group-hover:opacity-100 group-hover:w-[70%] group-hover:pr-2">
-                            Logout
-                        </div>
-                    </button>
-                    <button id="btn-login-trigger" class="group relative cursor-pointer outline-none border-none bg-transparent p-0 transition-all duration-150 active:translate-y-1 w-20">
-                        <span class="absolute top-0 left-0 w-full h-full rounded-xl bg-stone-400 translate-y-1"></span>
+                    <span class="absolute top-0 left-0 w-full h-full rounded-xl bg-stone-300 translate-y-0.5"></span>
 
-                        <span class="absolute top-0 left-0 w-full h-full rounded-xl bg-stone-300 translate-y-0.5"></span>
-
-                        <span class="relative block py-1 rounded-xl bg-[#f0f0f0] text-[#242424] text-xl font-bold
+                    <span class="relative block py-1 rounded-xl bg-[#f0f0f0] text-[#242424] text-xl font-bold
                                 border border-white/50
                                 shadow-[inset_0_1px_0_0_#fff,0_1px_3px_rgba(0,0,0,0.1)]
                                 group-hover:-translate-y-1 group-active:translate-y-0
                                 transition-all duration-150 ease-out">
-                            Login
-                        </span>
-                    </button>
+                        $t('login')
+                    </span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex flex-col relative">
+        <header
+            class="main-site-top-header py-4 border-b border-[var(--border-light)] flex flex-wrap md:flex-nowrap gap-3 items-center bg-[var(--bg)]/80 backdrop-blur-md sticky top-0 z-20">
+            <input type="text" id="global-search" placeholder="$t('search_placeholder')"
+                style="border-radius: calc(var(--global-radius) * 1.5);"
+                class="flex-1 bg-white/[0.03] border border-[var(--border-medium)] py-3 px-7 text-sm outline-none focus:border-blue-500/50 text-[var(--text-main)] md:flex-1 order-2 md:order-1">
+
+            <div class="flex gap-2 items-center w-full md:w-auto justify-between md:order-2">
+                <div style="border-radius: calc(var(--global-radius) * 0.75);"
+                    class="flex gap-1 bg-[var(--border-light)] p-1.5 mr-2">
+                    <button style="border-radius: calc(var(--global-radius) * 0.5);"
+                        class="view-filter px-4 py-2 text-[11px] font-bold bg-white/10 text-white"
+                        data-type="all">$t('all_filter')</button>
+                    <button style="border-radius: calc(var(--global-radius) * 0.5);"
+                        class="view-filter px-4 py-2 text-[11px] font-bold text-[var(--text-muted)]"
+                        data-type="link">$t('links_filter')</button>
+                    <button style="border-radius: calc(var(--global-radius) * 0.5);"
+                        class="view-filter px-4 py-2 text-[11px] font-bold text-[var(--text-muted)]"
+                        data-type="file">$t('files_filter')</button>
+                </div>
+<div class="second-section flex gap-2 items-center">
+    <input type="file" id="file-input" class="hidden" accept="*/*">
+
+        <button
+            class="group w-[50px] h-[50px] border-none rounded-full bg-[#1b1b1b] flex flex-col items-center justify-center cursor-pointer relative transition-all duration-300 shadow-[2px_2px_10px_rgba(0,0,0,0.11)] hover:bg-[#965eff] hover:z-50"
+            onclick="document.getElementById('file-input').click()">
+
+            <svg class="w-5 h-5 fill-[#d6b2ff] group-hover:fill-white group-hover:animate-[slide-in-top_0.6s_cubic-bezier(0.25,0.46,0.45,0.94)_both]"
+                viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z">
+                </path>
+            </svg>
+
+            <span class="w-[18px] h-[5px] border-b-2 border-l-2 border-r-2 border-[#b68fff] group-hover:border-white"></span>
+
+            <span style="position: absolute; left: 110%; top: 50%; transform: translateY(-50%); z-index: 100;"
+                class="opacity-0 whitespace-nowrap bg-[#0c0c0c] text-white text-sm px-[10px] py-[5px] rounded-[5px] transition-all duration-300 pointer-events-none group-hover:opacity-100 shadow-2xl
+                    before:absolute before:content-[''] before:w-[8px] before:h-[8px] before:bg-[#0c0c0c] before:rotate-45 before:right-[-4px] before:top-1/2 before:-translate-y-1/2">
+                File
+            </span>
+        </button>
+
+    <button id="header-add-btn"
+        class="group quick-add-trigger cursor-pointer outline-none hover:rotate-90 duration-300 flex items-center justify-center relative z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" width="45px" height="45px" viewBox="0 0 24 24"
+            class="custom-add-icon duration-300">
+            <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                stroke-width="1.5" stroke="#965eff" fill="none"></path>
+            <path d="M8 12H16" stroke-width="1.5" stroke="#965eff"></path>
+            <path d="M12 16V8" stroke-width="1.5" stroke="#965eff"></path>
+        </svg>
+    </button>
+
+    <button id="mobile-menu-toggle"
+        class="md:hidden flex items-center justify-center w-[45px] h-[45px] bg-[#1b1b1b] border border-[var(--border-light)] rounded-full relative z-10">
+    </button>
+</div>
+            </div>
+        </header>
+
+        <div id="feed-container" class="p-10 flex flex-wrap gap-8 h-full content-start overflow-y-auto"></div>
+    </main>
+
+    <aside id="editor-aside" style="border-radius: calc(var(--global-radius) * 1.5);" class="translate-x-full">
+        <div id="editor-header" class="flex justify-between items-center">
+            <h2 class="font-bold text-[11px] tracking-[0.2em] text-[var(--primary-color)] uppercase">
+                $t('resource_editor')
+            </h2>
+            <button id="close-editor"
+                class="text-[11px] opacity-40 hover:opacity-100 uppercase font-black text-[var(--text-main)]">$t('close')</button>
+        </div>
+        <div class="p-8 flex flex-col flex-1 overflow-hidden">
+            <div id="editor-form" class="space-y-8 flex-1 overflow-y-auto pr-2"></div>
+            <div class="pt-8 border-t border-[var(--border-light)] space-y-4">
+                <button id="update-item-btn" style="border-radius: calc(var(--global-radius) * 1.5);"
+                    class="w-full bg-[var(--primary-color)] py-4 text-[12px] font-black hover:bg-[var(--primary-hover)] transition-all shadow-xl text-white">$t('update_changes')</button>
+                <button id="delete-item-btn" style="border-radius: calc(var(--global-radius) * 1.5);"
+                    class="w-full bg-red-600/10 text-[var(--danger)] py-4 text-[11px] font-bold hover:bg-red-600 hover:text-white transition-all">$t('delete_permanently')</button>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<div id="quick-add-window" style="border-radius: calc(var(--global-radius) * 1.5);" class="hidden">
+    <div id="qa-header" class="flex justify-between items-center">
+        <div class="flex gap-2 items-center">
+            <div class="flex gap-2 mr-3">
+                <div class="w-4 h-4 rounded-full bg-[var(--danger)]"></div>
+                <div class="w-4 h-4 rounded-full bg-[var(--priority-med)]"></div>
+                <div class="w-4 h-4 rounded-full bg-[var(--priority-low)]"></div>
+            </div>
+            <span
+                class="text-[10px] font-black tracking-widest text-[var(--text-muted)] uppercase">$t('power_add_engine')</span>
+        </div>
+        <button id="qa-close-x" class="text-[var(--text-muted)] hover:text-white text-2xl">&times;</button>
+    </div>
+    <div class="p-8 flex flex-col gap-8">
+        <div class="flex justify-between items-end">
+            <div class="space-y-3">
+                <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase">$t('resource_type')</p>
+                <div class="flex gap-3" id="qa-type-container">
+                    <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill active"
+                        data-type="link">$t('links_filter')</div>
+                    <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill" data-type="text">
+                        $t('note_type')</div>
+                    <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill" data-type="code">
+                        $t('code_type')</div>
                 </div>
             </div>
+            <div style="border-radius: 9999px;"
+                class="flex gap-4 bg-[var(--bg)]/40 p-3 border border-[var(--border-light)]" id="qa-prio-container">
+                <div class="priority-dot dot-low" data-prio="low"></div>
+                <div class="priority-dot dot-med active" data-prio="med"></div>
+                <div class="priority-dot dot-high" data-prio="high"></div>
+            </div>
+        </div>
+        <textarea id="qa-content" placeholder="$t('content_placeholder')"
+            class="w-full h-40 input-base resize-none"></textarea>
+        <input id="qa-tags" type="text" placeholder="$t('tags_placeholder')" class="w-full input-base">
+        <button id="qa-save" style="border-radius: calc(var(--global-radius) * 1.5);"
+            class="w-full bg-[var(--primary-color)] py-5 text-[12px] font-black uppercase tracking-widest shadow-2xl text-white">$t('archive_in_db')</button>
+    </div>
+</div>
+
+<div id="settings-modal"
+    class="hidden fixed inset-0 z-[15000] flex items-center justify-center p-4 md:p-10 animate-fade-in font-sans text-slate-300"
+    style="background-color: rgba(2, 2, 2, var(--ui-opacity, 0.95)); backdrop-filter: blur(var(--ui-blur, 24px)); -webkit-backdrop-filter: blur(var(--ui-blur, 24px));">
+
+    <div class="w-full max-w-6xl h-[85vh] border border-white/5 shadow-[0_30px_100px_-20px_rgba(0,0,0,0.9)] flex overflow-hidden relative"
+        style="border-radius: calc(var(--global-radius)); background-color: rgba(5, 5, 5, var(--ui-opacity, 1));">
+
+        <div
+            class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-[var(--bg)] blur-[200px] rounded-full pointer-events-none">
+        </div>
+        <div
+            class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-sky-500/5 blur-[200px] rounded-full pointer-events-none">
+        </div>
+
+        <aside class="w-72 border-r border-white/5 p-8 flex flex-col z-10"
+            style="background-color: rgba(8, 8, 8, calc(var(--ui-opacity, 1) * 0.5)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+            <div class="flex items-center gap-3 mb-12 px-2">
+                <div class="w-10 h-10 bg-[var(--primary-color)] flex items-center justify-center shadow-inner"
+                    style="border-radius: calc(var(--global-radius));">
+                    <div class="w-4 h-4 border-2 border-black/50" style="border-radius: calc(var(--global-radius));">
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-white">System</h2>
+                    <p class="text-[9px] text-[var(--primary-text-color)] font-bold tracking-widest uppercase">
+                        Configuration
+                    </p>
+                </div>
+            </div>
+
+            <nav class="space-y-1.5 flex flex-col h-full overflow-y-auto no-scrollbar">
+                <div class="space-y-1.5">
+                    <button
+                        class="settings-nav-item active group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="general">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Main</span>
+                    </button>
+
+                    <button
+                        class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="appearance">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Personalization</span>
+                    </button>
+
+                    <button
+                        class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="audio">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Audio</span>
+                    </button>
+
+                    <button
+                        class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="performance">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Performance</span>
+                    </button>
+
+                    <button
+                        class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="security">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Security</span>
+                    </button>
+
+                    <button
+                        class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
+                        style="border-radius: calc(var(--global-radius));" data-section="developer">
+                        <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
+                            style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <span
+                            class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Developer</span>
+                    </button>
+                </div>
+
+                <div class="space-y-3 pt-6 mt-6 border-t border-white/5">
+                    <button id="close-settings-full"
+                        class="w-full group py-3 px-6 bg-white/5 hover:bg-white/10 border border-white/5 transition-all duration-300 flex items-center justify-center gap-3"
+                        style="border-radius: calc(var(--global-radius));">
+                        <span
+                            class="text-[11px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">Back</span>
+                    </button>
+
+                    <button id="save-changes"
+                        class="w-full group py-3 px-6 bg-[var(--primary-color)] hover:from-amber-400 transition-all duration-300 flex items-center justify-center gap-3"
+                        style="border-radius: calc(var(--global-radius));">
+                        <span
+                            class="text-[11px] font-bold uppercase tracking-widest text-[var(--primary-text-color)] transition-colors">Save</span>
+                    </button>
+                </div>
+            </nav>
         </aside>
 
-        <main class="flex flex-col relative">
-            <header
-                class="main-site-top-header py-4 border-b border-[var(--border-light)] flex flex-wrap md:flex-nowrap gap-3 items-center bg-[var(--bg)]/80 backdrop-blur-md sticky top-0 z-20">
-                <input type="text" id="global-search" placeholder="Szukaj zasobów lub tagów..."
-                    style="border-radius: calc(var(--global-radius) * 1.5);"
-                    class="flex-1 bg-white/[0.03] border border-[var(--border-medium)] py-3 px-7 text-sm outline-none focus:border-blue-500/50 text-[var(--text-main)] md:flex-1 order-2 md:order-1">
+        <main id="settings-main-content"
+            class="flex-grow overflow-y-auto custom-scrollbar relative transition-all no-scrollbar"
+            style="background-color: transparent;">
 
-                <div class="flex gap-2 items-center w-full md:w-auto justify-between md:order-2">
-                    <div style="border-radius: calc(var(--global-radius) * 0.75);"
-                        class="flex gap-1 bg-[var(--border-light)] p-1.5 mr-2">
-                        <button style="border-radius: calc(var(--global-radius) * 0.5);"
-                            class="view-filter px-4 py-2 text-[11px] font-bold bg-white/10 text-white"
-                            data-type="all">ALL</button>
-                        <button style="border-radius: calc(var(--global-radius) * 0.5);"
-                            class="view-filter px-4 py-2 text-[11px] font-bold text-[var(--text-muted)]"
-                            data-type="link">LINKS</button>
-                        <button style="border-radius: calc(var(--global-radius) * 0.5);"
-                            class="view-filter px-4 py-2 text-[11px] font-bold text-[var(--text-muted)]"
-                            data-type="file">FILES</button>
+            <div id="settings-section-general" class="settings-content p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Main Settings</h1>
+                    <p class="text-slate-500 text-lg leading-relaxed">Manage the primary identity of your
+                    profile.
+                    </p>
+                </header>
+
+                <div class="grid gap-6">
+                    <div class="p-8 bg-[#080808] border border-white/5 mb-4"
+                        style="border-radius: calc(var(--global-radius));">
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-3 ml-2">User Name</label>
+                        <input type="text" id="settings-display-name" oninput="autoSaveSettings()"
+                            placeholder="Twoje imię..."
+                            class="w-full bg-black border border-white/10 px-6 py-4 focus:outline-none focus:border-amber-500 transition-all text-white placeholder:text-slate-700"
+                            style="border-radius: calc(var(--global-radius));">
                     </div>
-                    <div class="second-section flex gap-2 items-center">
 
-                        <input type="file" id="file-input" class="hidden" accept="*/*">
-                        
+                    <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
+                                style="border-radius: calc(var(--global-radius));">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">Push Notifications</p>
+                                <p class="text-sm text-slate-500">Receive alerts about changes</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="push-notifications" class="sr-only peer"
+                                onchange="autoSaveSettings()">
+                            <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                style="border-radius: calc(var(--global-radius));">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="p-8 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-4 ml-2">System Language</label>
+                        <select id="settings-language" onchange="autoSaveSettings()"
+                            class="w-full bg-black border border-white/10 px-6 py-4 focus:outline-none focus:border-[var(--primary-color)] transition-all text-white appearance-none cursor-pointer"
+                            style="border-radius: calc(var(--global-radius));">
+                            <option value="pl">Polski</option>
+                            <option value="en">English</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section-appearance" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Design</h1>
+                    <p class="text-slate-500 text-lg">Define the visual side of your system.</p>
+                </header>
+
+                <div class="space-y-10">
+                    <section>
+                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-[var(--primary-color)] mb-6 ml-2">Main Color</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button
+                                class="accent-picker group relative w-16 h-16 bg-amber-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-amber-500/10"
+                                style="border-radius: calc(var(--global-radius));" data-color="#f59e0b">
+                                <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <button
+                                class="accent-picker group relative w-16 h-16 bg-sky-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-sky-500/10"
+                                style="border-radius: calc(var(--global-radius));" data-color="#0ea5e9">
+                                <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <button
+                                class="accent-picker group relative w-16 h-16 bg-rose-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-rose-500/10"
+                                style="border-radius: calc(var(--global-radius));" data-color="#f43f5e">
+                                <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <button
+                                class="group relative w-16 h-16 bg-white border-4 border-black transition-all hover:scale-105 shadow-xl overflow-hidden"
+                                style="border-radius: calc(var(--global-radius));">
+
+                                <input type="color" id="custom-color-picker"
+                                    class="absolute inset-0 w-full h-full cursor-pointer opacity-0" value="#ffffff">
+
+                                <svg class="w-8 h-8 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-2 gap-6">
+                        <div class="p-8 bg-[#080808] border border-white/5"
+                            style="border-radius: calc(var(--global-radius));">
+                            <h4 class="font-semibold mb-6 text-white">UI Transparency</h4>
+                            <input type="range" id="ui-opacity" min="50" max="100" value="90"
+                                onchange="autoSaveSettings()"
+                                class="w-full h-1.5 bg-black appearance-none cursor-pointer accent-[var(--primary-color)]"
+                                style="border-radius: calc(var(--global-radius));">
+                        </div>
+                        <div class="p-8 bg-[#080808] border border-white/5"
+                            style="border-radius: calc(var(--global-radius));">
+                            <h4 class="font-semibold mb-6 text-white">Rounding the corners</h4>
+                            <input type="range" id="ui-radius" min="0" max="40" value="24"
+                                oninput="updateRadius(this.value)" onchange="autoSaveSettings()"
+                                class="w-full h-1.5 bg-black appearance-none cursor-pointer accent-[var(--primary-color)]"
+                                style="border-radius: calc(var(--global-radius));">
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div id="settings-section-audio" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Audio</h1>
+                    <p class="text-slate-500 text-lg">Manage audio and sound effects.</p>
+                </header>
+
+                <div class="grid gap-6">
+                    <div class="p-8 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="font-semibold text-white">System Volume</span>
+                            <span
+                                class="text-[var(--primary-text-color)] font-bold bg-[var(--primary-color)] px-3 py-1 text-sm"
+                                id="volume-val" style="border-radius: calc(var(--global-radius));">80%</span>
+                        </div>
+                        <input type="range" id="system-volume" min="0" max="100" value="80"
+                            oninput="document.getElementById('volume-val').innerText = this.value + '%'"
+                            onchange="autoSaveSettings()"
+                            class="w-full h-1.5 bg-black appearance-none accent-amber-500 cursor-pointer"
+                            style="border-radius: calc(var(--global-radius));">
+                    </div>
+
+                    <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
+                                style="border-radius: calc(var(--global-radius));">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-white">Interface effects</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="sound-effects" class="sr-only peer" checked
+                                onchange="autoSaveSettings()">
+                            <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                style="border-radius: calc(var(--global-radius));">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section-performance" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Performance</h1>
+                    <p class="text-slate-500 text-lg">Optimize performance for your hardware.</p>
+                </header>
+
+                <div class="space-y-5">
+                    <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
+                                style="border-radius: calc(var(--global-radius));">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">Smooth Animations</p>
+                                <p class="text-sm text-slate-500">Turn off to save resources</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="enable-animations" class="sr-only peer" checked
+                                onchange="autoSaveSettings()">
+                            <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                style="border-radius: calc(var(--global-radius));">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
+                                style="border-radius: calc(var(--global-radius));">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">Hardware Acceleration</p>
+                                <p class="text-sm text-slate-500">Use GPU for rendering</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="gpu-acceleration" class="sr-only peer" checked
+                                onchange="autoSaveSettings()">
+                            <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                style="border-radius: calc(var(--global-radius));">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section-security" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Security</h1>
+                    <p class="text-slate-500 text-lg">Protect your data and privacy.</p>
+                </header>
+
+                <div class="space-y-6">
+                    <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
+                                style="border-radius: calc(var(--global-radius));">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">Private mode</p>
+                                <p class="text-sm text-slate-500">Hide your activity</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="private-mode" class="sr-only peer" onchange="autoSaveSettings()">
+                            <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                style="border-radius: calc(var(--global-radius));">
+                            </div>
+                        </label>
+                    </div>
+
                     <button
-                        class="group w-[50px] h-[50px] border-none rounded-full bg-[#1b1b1b] flex flex-col items-center justify-center cursor-pointer relative transition-duration-300 shadow-[2px_2px_10px_rgba(0,0,0,0.11)] hover:bg-[#965eff]"
-                        onclick="document.getElementById('file-input').click()">
-
-                        <svg class="w-5 h-5 fill-[#d6b2ff] group-hover:fill-white group-hover:animate-[slide-in-top_0.6s_cubic-bezier(0.25,0.46,0.45,0.94)_both]"
-                            viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z">
+                        class="w-full p-6 border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 transition-all text-left group flex justify-between items-center"
+                        style="border-radius: calc(var(--global-radius));">
+                        <div>
+                            <p class="font-semibold text-rose-400">Reset all data</p>
+                            <p class="text-sm text-rose-400/70">This operation cannot be undone.</p>
+                        </div>
+                        <svg class="w-6 h-6 text-rose-500 opacity-50 group-hover:opacity-100 transition-opacity"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                             </path>
                         </svg>
-
-                        <span
-                            class="w-[18px] h-[5px] border-b-2 border-l-2 border-r-2 border-[#b68fff] group-hover:border-white"></span>
-
-                        <span
-                            class="absolute right-[-80px] opacity-0 bg-[#0c0c0c] text-white text-sm px-[10px] py-[5px] rounded-[5px] flex items-center justify-center transition-opacity duration-200 pointer-events-none tracking-[0.5px] group-hover:opacity-100 group-hover:duration-300
-                    before:absolute before:content-[''] before:w-[10px] before:h-[10px] before:bg-[#0c0c0c] before:rotate-45 before:transition-duration-300 before:left-[-5px]">
-                            Plik
-                        </span>
-                    </button>
-
-                    <style>
-                        @keyframes slide-in-top {
-                            0% {
-                                transform: translateY(-10px);
-                                opacity: 0;
-                            }
-
-                            100% {
-                                transform: translateY(0px);
-                                opacity: 1;
-                            }
-                        }
-                    </style>
-
-                    <button id="header-add-btn" title="Add New" class="group quick-add-trigger cursor-pointer outline-none hover:rotate-90 duration-300 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="45px" height="45px" viewBox="0 0 24 24" class="custom-add-icon duration-300">
-                        <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke-width="1.5"></path>
-                        <path d="M8 12H16" stroke-width="1.5"></path>
-                        <path d="M12 16V8" stroke-width="1.5"></path>
-                    </svg>
-                    </button>
-
-                    <button id="mobile-menu-toggle"
-                        class="md:hidden flex items-center justify-center w-[45px] h-[45px] bg-[#1b1b1b] border border-[var(--border-light)] rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
                     </button>
                 </div>
-                </div>
-            </header>
+            </div>
 
-            <div id="feed-container" class="p-10 flex flex-wrap gap-8 h-full content-start overflow-y-auto"></div>
+            <div id="settings-section-developer" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
+                <header class="mb-12">
+                    <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Developer</h1>
+                    <p class="text-slate-500 text-lg leading-relaxed">Advanced tools and diagnostics.</p>
+                </header>
+
+                <div class="p-8 bg-black border border-amber-500/20 mb-8 border-dashed shadow-inner"
+                    style="border-radius: calc(var(--global-radius));">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="relative">
+                            <div class="w-3 h-3 bg-[var(--primary-color)]"
+                                style="border-radius: calc(var(--global-radius));"></div>
+                            <div class="w-3 h-3 bg-[var(--primary-color)] animate-ping absolute top-0 left-0"
+                                style="border-radius: calc(var(--global-radius));"></div>
+                        </div>
+                        <span class="text-[var(--primary-color)] font-bold text-sm tracking-widest uppercase">Expert Mode</span>
+                    </div>
+
+                    <div class="grid gap-5">
+                        <div class="settings-row flex items-center justify-between p-5 bg-[#080808] border border-white/5"
+                            style="border-radius: calc(var(--global-radius));">
+                            <span class="text-sm font-medium text-slate-300">Event logging (Debug)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="debug-mode" class="sr-only peer"
+                                    onchange="autoSaveSettings()">
+                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
+                                    style="border-radius: calc(var(--global-radius));">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="p-5 bg-[#080808] border border-white/5"
+                            style="border-radius: calc(var(--global-radius));">
+                            <p class="text-[10px] font-bold text-slate-600 mb-3 uppercase tracking-widest">API Endpoint Custom</p>
+                            <input type="text" id="api-custom-url" oninput="autoSaveSettings()"
+                                placeholder="https://api.example.com"
+                                class="w-full bg-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--primary-color)] transition-all placeholder:text-slate-700"
+                                style="border-radius: calc(var(--global-radius));">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
-
-        <aside id="editor-aside" style="border-radius: calc(var(--global-radius) * 1.5);" class="translate-x-full">
-            <div id="editor-header" class="flex justify-between items-center">
-                <h2 class="font-bold text-[11px] tracking-[0.2em] text-[var(--primary-color)] uppercase">Edytor Zasobu
-                </h2>
-                <button id="close-editor"
-                    class="text-[11px] opacity-40 hover:opacity-100 uppercase font-black text-[var(--text-main)]">Zamknij</button>
-            </div>
-            <div class="p-8 flex flex-col flex-1 overflow-hidden">
-                <div id="editor-form" class="space-y-8 flex-1 overflow-y-auto pr-2"></div>
-                <div class="pt-8 border-t border-[var(--border-light)] space-y-4">
-                    <button id="update-item-btn" style="border-radius: calc(var(--global-radius) * 1.5);"
-                        class="w-full bg-[var(--primary-color)] py-4 text-[12px] font-black hover:bg-[var(--primary-hover)] transition-all shadow-xl text-white">AKTUALIZUJ
-                        ZMIANY</button>
-                    <button id="delete-item-btn" style="border-radius: calc(var(--global-radius) * 1.5);"
-                        class="w-full bg-red-600/10 text-[var(--danger)] py-4 text-[11px] font-bold hover:bg-red-600 hover:text-white transition-all">USUŃ
-                        TRWALE</button>
-                </div>
-            </div>
-        </aside>
     </div>
-
-    <div id="quick-add-window" style="border-radius: calc(var(--global-radius) * 1.5);" class="hidden">
-        <div id="qa-header" class="flex justify-between items-center">
-            <div class="flex gap-2 items-center">
-                <div class="flex gap-2 mr-3">
-                    <div class="w-4 h-4 rounded-full bg-[var(--danger)]"></div>
-                    <div class="w-4 h-4 rounded-full bg-[var(--priority-med)]"></div>
-                    <div class="w-4 h-4 rounded-full bg-[var(--priority-low)]"></div>
-                </div>
-                <span class="text-[10px] font-black tracking-widest text-[var(--text-muted)] uppercase">Power Add
-                    Engine</span>
-            </div>
-            <button id="qa-close-x" class="text-[var(--text-muted)] hover:text-white text-2xl">&times;</button>
-        </div>
-        <div class="p-8 flex flex-col gap-8">
-            <div class="flex justify-between items-end">
-                <div class="space-y-3">
-                    <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase">Typ Zasobu</p>
-                    <div class="flex gap-3" id="qa-type-container">
-                        <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill active"
-                            data-type="link">LINK</div>
-                        <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill"
-                            data-type="text">
-                            NOTE</div>
-                        <div style="border-radius: calc(var(--global-radius) * 0.75);" class="type-pill"
-                            data-type="code">
-                            CODE</div>
-                    </div>
-                </div>
-                <div style="border-radius: 9999px;"
-                    class="flex gap-4 bg-[var(--bg)]/40 p-3 border border-[var(--border-light)]" id="qa-prio-container">
-                    <div class="priority-dot dot-low" data-prio="low"></div>
-                    <div class="priority-dot dot-med active" data-prio="med"></div>
-                    <div class="priority-dot dot-high" data-prio="high"></div>
-                </div>
-            </div>
-            <textarea id="qa-content" placeholder="Wpisz treść, notatkę lub wklej link..."
-                class="w-full h-40 input-base resize-none"></textarea>
-            <input id="qa-tags" type="text" placeholder="Tagi (po przecinku)..." class="w-full input-base">
-            <button id="qa-save" style="border-radius: calc(var(--global-radius) * 1.5);"
-                class="w-full bg-[var(--primary-color)] py-5 text-[12px] font-black uppercase tracking-widest shadow-2xl text-white">Archiwizuj
-                w bazie</button>
-        </div>
-    </div>
-
-    <div id="settings-modal"
-        class="hidden fixed inset-0 z-[15000] flex items-center justify-center p-4 md:p-10 animate-fade-in font-sans text-slate-300"
-        style="background-color: rgba(2, 2, 2, var(--ui-opacity, 0.95)); backdrop-filter: blur(var(--ui-blur, 24px)); -webkit-backdrop-filter: blur(var(--ui-blur, 24px));">
-
-        <div class="w-full max-w-6xl h-[85vh] border border-white/5 shadow-[0_30px_100px_-20px_rgba(0,0,0,0.9)] flex overflow-hidden relative"
-            style="border-radius: calc(var(--global-radius)); background-color: rgba(5, 5, 5, var(--ui-opacity, 1));">
-
-            <div
-                class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-[var(--bg)] blur-[200px] rounded-full pointer-events-none">
-            </div>
-            <div
-                class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-sky-500/5 blur-[200px] rounded-full pointer-events-none">
-            </div>
-
-            <aside class="w-72 border-r border-white/5 p-8 flex flex-col z-10"
-                style="background-color: rgba(8, 8, 8, calc(var(--ui-opacity, 1) * 0.5)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-                <div class="flex items-center gap-3 mb-12 px-2">
-                    <div class="w-10 h-10 bg-[var(--primary-color)] flex items-center justify-center shadow-inner"
-                        style="border-radius: calc(var(--global-radius));">
-                        <div class="w-4 h-4 border-2 border-black/50"
-                            style="border-radius: calc(var(--global-radius));">
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-white">System</h2>
-                        <p class="text-[9px] text-[var(--primary-text-color)] font-bold tracking-widest uppercase">
-                            Configuration
-                        </p>
-                    </div>
-                </div>
-
-                <nav class="space-y-1.5 flex flex-col h-full overflow-y-auto no-scrollbar">
-                    <div class="space-y-1.5">
-                        <button
-                            class="settings-nav-item active group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="general">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Główne</span>
-                        </button>
-
-                        <button
-                            class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="appearance">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Personalizacja</span>
-                        </button>
-
-                        <button
-                            class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="audio">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Dźwięk</span>
-                        </button>
-
-                        <button
-                            class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="performance">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Wydajność</span>
-                        </button>
-
-                        <button
-                            class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="security">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Bezpieczeństwo</span>
-                        </button>
-
-                        <button
-                            class="settings-nav-item group w-full flex items-center gap-4 px-4 py-3 transition-all duration-300 hover:bg-white/5"
-                            style="border-radius: calc(var(--global-radius));" data-section="developer">
-                            <div class="w-1 h-5 bg-[var(--primary-color)] opacity-0 group-[.active]:opacity-100 transition-opacity"
-                                style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <span
-                                class="text-sm font-medium tracking-wide group-[.active]:text-white text-slate-500 group-hover:text-slate-200 transition-colors">Deweloper</span>
-                        </button>
-                    </div>
-
-                    <div class="space-y-3 pt-6 mt-6 border-t border-white/5">
-                        <button id="close-settings-full"
-                            class="w-full group py-3 px-6 bg-white/5 hover:bg-white/10 border border-white/5 transition-all duration-300 flex items-center justify-center gap-3"
-                            style="border-radius: calc(var(--global-radius));">
-                            <span
-                                class="text-[11px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">Powrót</span>
-                        </button>
-
-                        <button id="save-changes"
-                            class="w-full group py-3 px-6 bg-[var(--primary-color)] hover:from-amber-400 transition-all duration-300 flex items-center justify-center gap-3"
-                            style="border-radius: calc(var(--global-radius));">
-                            <span
-                                class="text-[11px] font-bold uppercase tracking-widest text-[var(--primary-text-color)] transition-colors">Zapisz</span>
-                        </button>
-                    </div>
-                </nav>
-            </aside>
-
-            <main id="settings-main-content"
-                class="flex-grow overflow-y-auto custom-scrollbar relative transition-all no-scrollbar"
-                style="background-color: transparent;">
-
-                <div id="settings-section-general" class="settings-content p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Ustawienia Główne</h1>
-                        <p class="text-slate-500 text-lg leading-relaxed">Zarządzaj podstawową tożsamością swojego
-                            profilu.
-                        </p>
-                    </header>
-
-                    <div class="grid gap-6">
-                        <div class="p-8 bg-[#080808] border border-white/5 mb-4"
-                            style="border-radius: calc(var(--global-radius));">
-                            <label
-                                class="block text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-3 ml-2">Nazwa
-                                wyświetlana</label>
-                            <input type="text" id="settings-display-name" oninput="autoSaveSettings()"
-                                placeholder="Twoje imię..."
-                                class="w-full bg-black border border-white/10 px-6 py-4 focus:outline-none focus:border-amber-500 transition-all text-white placeholder:text-slate-700"
-                                style="border-radius: calc(var(--global-radius));">
-                        </div>
-
-                        <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex items-center gap-5">
-                                <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
-                                    style="border-radius: calc(var(--global-radius));">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-white">Powiadomienia push</p>
-                                    <p class="text-sm text-slate-500">Otrzymuj alerty o zmianach</p>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="push-notifications" class="sr-only peer"
-                                    onchange="autoSaveSettings()">
-                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                    style="border-radius: calc(var(--global-radius));">
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="p-8 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <label
-                                class="block text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-4 ml-2">Język
-                                Systemowy</label>
-                            <select id="settings-language" onchange="autoSaveSettings()"
-                                class="w-full bg-black border border-white/10 px-6 py-4 focus:outline-none focus:border-[var(--primary-color)] transition-all text-white appearance-none cursor-pointer"
-                                style="border-radius: calc(var(--global-radius));">
-                                <option value="pl">Polski</option>
-                                <option value="en">English</option>
-                                <option value="de">Deutsch</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="settings-section-appearance" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Wygląd</h1>
-                        <p class="text-slate-500 text-lg">Zdefiniuj wizualną stronę swojego systemu.</p>
-                    </header>
-
-                    <div class="space-y-10">
-                        <section>
-                            <h3
-                                class="text-xs font-black uppercase tracking-[0.2em] text-[var(--primary-color)] mb-6 ml-2">
-                                Kolor
-                                Przewodni</h3>
-                            <div class="flex flex-wrap gap-4">
-                                <button
-                                    class="accent-picker group relative w-16 h-16 bg-amber-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-amber-500/10"
-                                    style="border-radius: calc(var(--global-radius));" data-color="#f59e0b">
-                                    <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </svg>
-                                </button>
-                                <button
-                                    class="accent-picker group relative w-16 h-16 bg-sky-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-sky-500/10"
-                                    style="border-radius: calc(var(--global-radius));" data-color="#0ea5e9">
-                                    <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </svg>
-                                </button>
-                                <button
-                                    class="accent-picker group relative w-16 h-16 bg-rose-500 border-4 border-black transition-all hover:scale-105 shadow-xl shadow-rose-500/10"
-                                    style="border-radius: calc(var(--global-radius));" data-color="#f43f5e">
-                                    <svg class="w-6 h-6 text-black opacity-0 group-[.active]:opacity-100 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </svg>
-                                </button>
-                                <button
-                                    class="group relative w-16 h-16 bg-white border-4 border-black transition-all hover:scale-105 shadow-xl overflow-hidden"
-                                    style="border-radius: calc(var(--global-radius));">
-
-                                    <input type="color" id="custom-color-picker"
-                                        class="absolute inset-0 w-full h-full cursor-pointer opacity-0" value="#ffffff">
-
-                                    <svg class="w-8 h-8 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </section>
-
-                        <section class="grid grid-cols-2 gap-6">
-                            <div class="p-8 bg-[#080808] border border-white/5"
-                                style="border-radius: calc(var(--global-radius));">
-                                <h4 class="font-semibold mb-6 text-white">Przezroczystość UI</h4>
-                                <input type="range" id="ui-opacity" min="50" max="100" value="90"
-                                    onchange="autoSaveSettings()"
-                                    class="w-full h-1.5 bg-black appearance-none cursor-pointer accent-[var(--primary-color)]"
-                                    style="border-radius: calc(var(--global-radius));">
-                            </div>
-                            <div class="p-8 bg-[#080808] border border-white/5"
-                                style="border-radius: calc(var(--global-radius));">
-                                <h4 class="font-semibold mb-6 text-white">Zaokrąglenie rogów</h4>
-                                <input type="range" id="ui-radius" min="0" max="40" value="24"
-                                    oninput="updateRadius(this.value)" onchange="autoSaveSettings()"
-                                    class="w-full h-1.5 bg-black appearance-none cursor-pointer accent-[var(--primary-color)]"
-                                    style="border-radius: calc(var(--global-radius));">
-                            </div>
-                        </section>
-                    </div>
-                </div>
-
-                <div id="settings-section-audio" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Dźwięk</h1>
-                        <p class="text-slate-500 text-lg">Zarządzaj audio i efektami dźwiękowymi.</p>
-                    </header>
-
-                    <div class="grid gap-6">
-                        <div class="p-8 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="font-semibold text-white">Głośność Systemowa</span>
-                                <span
-                                    class="text-[var(--primary-text-color)] font-bold bg-[var(--primary-color)] px-3 py-1 text-sm"
-                                    id="volume-val" style="border-radius: calc(var(--global-radius));">80%</span>
-                            </div>
-                            <input type="range" id="system-volume" min="0" max="100" value="80"
-                                oninput="document.getElementById('volume-val').innerText = this.value + '%'"
-                                onchange="autoSaveSettings()"
-                                class="w-full h-1.5 bg-black appearance-none accent-amber-500 cursor-pointer"
-                                style="border-radius: calc(var(--global-radius));">
-                        </div>
-
-                        <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex items-center gap-5">
-                                <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
-                                    style="border-radius: calc(var(--global-radius));">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <p class="font-semibold text-white">Efekty interfejsu</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="sound-effects" class="sr-only peer" checked
-                                    onchange="autoSaveSettings()">
-                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                    style="border-radius: calc(var(--global-radius));">
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="settings-section-performance" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Wydajność</h1>
-                        <p class="text-slate-500 text-lg">Zoptymalizuj działanie pod swój sprzęt.</p>
-                    </header>
-
-                    <div class="space-y-5">
-                        <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex items-center gap-5">
-                                <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
-                                    style="border-radius: calc(var(--global-radius));">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-white">Płynne animacje</p>
-                                    <p class="text-sm text-slate-500">Wyłącz, aby oszczędzać zasoby</p>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="enable-animations" class="sr-only peer" checked
-                                    onchange="autoSaveSettings()">
-                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                    style="border-radius: calc(var(--global-radius));">
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex items-center gap-5">
-                                <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
-                                    style="border-radius: calc(var(--global-radius));">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-white">Hardware Acceleration</p>
-                                    <p class="text-sm text-slate-500">Wykorzystaj GPU do renderowania</p>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="gpu-acceleration" class="sr-only peer" checked
-                                    onchange="autoSaveSettings()">
-                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                    style="border-radius: calc(var(--global-radius));">
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="settings-section-security" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Bezpieczeństwo</h1>
-                        <p class="text-slate-500 text-lg">Chroń swoje dane i prywatność.</p>
-                    </header>
-
-                    <div class="space-y-6">
-                        <div class="settings-row flex items-center justify-between p-6 bg-[#080808] border border-white/5"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div class="flex items-center gap-5">
-                                <div class="w-12 h-12 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-[var(--primary-color)] border border-white/5"
-                                    style="border-radius: calc(var(--global-radius));">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-white">Tryb prywatny</p>
-                                    <p class="text-sm text-slate-500">Ukryj swoją aktywność</p>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="private-mode" class="sr-only peer"
-                                    onchange="autoSaveSettings()">
-                                <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                    style="border-radius: calc(var(--global-radius));">
-                                </div>
-                            </label>
-                        </div>
-
-                        <button
-                            class="w-full p-6 border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 transition-all text-left group flex justify-between items-center"
-                            style="border-radius: calc(var(--global-radius));">
-                            <div>
-                                <p class="font-semibold text-rose-400">Zresetuj wszystkie dane</p>
-                                <p class="text-sm text-rose-400/70">Tej operacji nie można cofnąć.</p>
-                            </div>
-                            <svg class="w-6 h-6 text-rose-500 opacity-50 group-hover:opacity-100 transition-opacity"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="settings-section-developer" class="settings-content hidden p-12 max-w-4xl animate-fade-in">
-                    <header class="mb-12">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4">Deweloper</h1>
-                        <p class="text-slate-500 text-lg leading-relaxed">Narzędzia zaawansowane i diagnostyka.</p>
-                    </header>
-
-                    <div class="p-8 bg-black border border-amber-500/20 mb-8 border-dashed shadow-inner"
-                        style="border-radius: calc(var(--global-radius));">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="relative">
-                                <div class="w-3 h-3 bg-[var(--primary-color)]"
-                                    style="border-radius: calc(var(--global-radius));"></div>
-                                <div class="w-3 h-3 bg-[var(--primary-color)] animate-ping absolute top-0 left-0"
-                                    style="border-radius: calc(var(--global-radius));"></div>
-                            </div>
-                            <span class="text-[var(--primary-color)] font-bold text-sm tracking-widest uppercase">Tryb
-                                Ekspercki</span>
-                        </div>
-
-                        <div class="grid gap-5">
-                            <div class="settings-row flex items-center justify-between p-5 bg-[#080808] border border-white/5"
-                                style="border-radius: calc(var(--global-radius));">
-                                <span class="text-sm font-medium text-slate-300">Logowanie zdarzeń (Debug)</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="debug-mode" class="sr-only peer"
-                                        onchange="autoSaveSettings()">
-                                    <div class="w-11 h-6 bg-black border border-white/10 peer peer-checked:after:translate-x-[19px] peer-checked:bg-[var(--primary-color)] after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-500 peer-checked:after:bg-slate-500 after:rounded-full after:h-4 after:w-4 after:transition-all"
-                                        style="border-radius: calc(var(--global-radius));">
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="p-5 bg-[#080808] border border-white/5"
-                                style="border-radius: calc(var(--global-radius));">
-                                <p class="text-[10px] font-bold text-slate-600 mb-3 uppercase tracking-widest">API
-                                    Endpoint
-                                    Custom</p>
-                                <input type="text" id="api-custom-url" oninput="autoSaveSettings()"
-                                    placeholder="https://api.example.com"
-                                    class="w-full bg-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--primary-color)] transition-all placeholder:text-slate-700"
-                                    style="border-radius: calc(var(--global-radius));">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
-        </div>
-    </div>
+</div>
 
     <style>
         /* Niestandardowe animacje dla lepszego feelingu */
