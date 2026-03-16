@@ -170,10 +170,10 @@ main {
 }
 
 #editor-aside {
-    width: 600px;
+    width: clamp(400px , 28vw, 700px);
     position: fixed;
-    top: 150px;
-    right: 50px;
+    top: 100px;
+    right: 3vw;
     height: auto;
     max-height: 80vh;
     background: var(--bg-card);
@@ -203,6 +203,7 @@ main {
 .item-card {
     display: inline-block;
     width: 100%;
+    max-width: 400px;
     margin-bottom: 1.5rem;
     break-inside: avoid;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -214,6 +215,15 @@ main {
     border-radius: calc(var(--global-radius) * 1.5);
 }
 
+.item-card.is-note-card {
+    max-width: 350px;
+    /* Tutaj ustalasz szerokość notatki */
+    width: 100%;
+    /* Zapobiega dziwnym zachowaniom w układzie kolumnowym */
+    break-inside: avoid;
+    display: flex;
+}
+
 .item-card:hover {
     background: rgba(255, 255, 255, 0.06);
     transform: translateY(-4px);
@@ -223,7 +233,8 @@ main {
 #feed-container {
     display: block;
     column-count: 3;
-    column-gap: 1.5rem;
+    column-gap: 1.25rem;
+    max-width: 1600px;
     padding: 20px;
     width: 100%;
 }

@@ -679,9 +679,18 @@ function prependSingleElementToUI(data) {
     const container = document.getElementById('feed-container');
     if (!container) return;
 
+    // --- DODAJ TO: Rozpoznawanie typu dla nowej karty ---
+    const isLink = data.type === 'link';
+    const isCode = data.type === 'code';
+    const isFile = data.type === 'file';
+    const isNote = !isLink && !isCode && !isFile;
+    const noteClass = isNote ? 'is-note-card' : '';
+    // --------------------------------------------------
+
     const div = document.createElement('div');
     div.setAttribute('data-id', data.id);
-    div.className = "item-card p-6 flex flex-col group transition-all";
+    // DODAJ noteClass do listy klas:
+    div.className = `item-card p-6 flex flex-col group transition-all ${noteClass}`;
     div.style.borderRadius = "var(--global-radius)";
     div.onclick = () => window.openEditor(data.id);
     div.innerHTML = createCardContentHTML(data);
@@ -895,17 +904,30 @@ function createCardContentHTML(i) {
     `;
 }
 
-// 2. Główna funkcja renderująca partie elementów
 function renderBatch() {
-    const container = document.getElementById('feed-container'); // Sprawdź czy masz w HTML id="feed-items" czy "feed-container"
+    const container = document.getElementById('feed-container');
     if (!container) return;
 
     const nextBatch = allFilteredItems.slice(renderedCount, renderedCount + ITEMS_PER_BATCH);
     if (nextBatch.length === 0) return;
 
     const htmlBatch = nextBatch.map(i => {
+        // --- MOJA POPRAWKA TUTAJ ---
+        // Definiujemy te same zmienne co w createCardContentHTML, żeby mieć pewność
+        const isLink = i.type === 'link';
+        const isCode = i.type === 'code';
+        const isFile = i.type === 'file';
+
+        // Notatka to coś, co nie jest żadnym z powyższych
+        const isNote = !isLink && !isCode && !isFile;
+        const noteClass = isNote ? 'is-note-card' : '';
+        // ---------------------------
+
         return `
-        <div data-id="${i.id}" class="item-card p-6 flex flex-col group transition-all" style="border-radius: var(--global-radius);" onclick="window.openEditor('${i.id}')">
+        <div data-id="${i.id}" 
+             class="item-card p-6 flex flex-col group transition-all ${noteClass}" 
+             style="border-radius: var(--global-radius);" 
+             onclick="window.openEditor('${i.id}')">
             ${createCardContentHTML(i)}
         </div>`;
     }).join('');
