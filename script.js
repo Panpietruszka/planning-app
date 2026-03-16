@@ -849,7 +849,7 @@ function createCardContentHTML(i) {
     if (i.type === 'file') {
         if (isImage) {
             filePreviewHtml = `
-            <div id="bg-load-${i.id}" class="mt-3 overflow-hidden bg-white/5 border border-white/5 h-40 flex items-center justify-center" style="border-radius: var(--global-radius);">
+            <div id="bg-load-${i.id}" class="mt-3 overflow-hidden bg-white/5 border border-white/5 h-auto flex items-center justify-center" style="border-radius: var(--global-radius);">
                 <div class="w-4 h-4 border-2 border-white/20 border-t-white/80 rounded-full animate-spin"></div>
             </div>`;
         } else {
@@ -941,7 +941,7 @@ function loadImagesInBackground(imageItems) {
 
             const img = new Image();
             img.src = item.fileUrl;
-            img.className = "w-full h-full object-cover opacity-0 transition-opacity duration-500";
+            img.className = "w-full object-cover opacity-0 transition-opacity duration-500 scale-1/2";
 
             img.onload = () => {
                 placeholder.innerHTML = '';
