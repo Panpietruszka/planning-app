@@ -38,6 +38,7 @@
     --primary-color: #d97706;
     --primary-hover: #b45309;
     --primary-light: rgba(217, 119, 6, 0.2);
+    --input-bg-color: #424242;
 
     --primary-color-hover: color-mix(in srgb, var(--primary-color), black 15%);
     --primary-color-light: color-mix(in srgb, var(--primary-color), white 90%);
