@@ -62,7 +62,6 @@
     --radius-sm: 0.25rem;
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
-    --radius-2xl: 1rem;
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
@@ -252,9 +251,6 @@
   }
   .inset-0 {
     inset: calc(var(--spacing) * 0);
-  }
-  .start {
-    inset-inline-start: var(--spacing);
   }
   .-top-\[20\%\] {
     top: calc(20% * -1);
@@ -597,9 +593,6 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
-  .content-start {
-    align-content: flex-start;
-  }
   .items-center {
     align-items: center;
   }
@@ -705,9 +698,6 @@
   }
   .overflow-y-auto {
     overflow-y: auto;
-  }
-  .rounded-2xl {
-    border-radius: var(--radius-2xl);
   }
   .rounded-\[5px\] {
     border-radius: 5px;
@@ -1030,9 +1020,6 @@
   .p-8 {
     padding: calc(var(--spacing) * 8);
   }
-  .p-10 {
-    padding: calc(var(--spacing) * 10);
-  }
   .p-12 {
     padding: calc(var(--spacing) * 12);
   }
@@ -1334,10 +1321,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-sky-500) 10%, transparent) var(--tw-shadow-alpha), transparent);
     }
-  }
-  .blur {
-    --tw-blur: blur(8px);
-    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .blur-\[200px\] {
     --tw-blur: blur(200px);
@@ -2147,7 +2130,7 @@ main {
   min-width: 0;
 }
 #editor-aside {
-  width: clamp(400px , 28vw, 700px);
+  width: clamp(400px, 28vw, 700px);
   position: fixed;
   top: 100px;
   right: 3vw;
@@ -2175,11 +2158,11 @@ main {
   opacity: 0;
 }
 .item-card {
-  display: inline-block;
+  display: block;
   width: 100%;
   max-width: 400px;
-  margin-bottom: 1.5rem;
-  break-inside: avoid;
+  margin-bottom: 0;
+  break-inside: avoid-column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--border-light);
   background: rgba(255, 255, 255, 0.02);
@@ -2187,6 +2170,8 @@ main {
   cursor: pointer;
   overflow: hidden;
   border-radius: calc(var(--global-radius) * 1.5);
+  height: fit-content;
+  min-height: 50px;
 }
 .item-card.is-note-card {
   max-width: 350px;
@@ -2199,22 +2184,25 @@ main {
   transform: translateY(-4px);
   border-color: var(--primary-hover);
 }
-#feed-container {
-  display: block;
-  column-count: 3;
-  column-gap: 1.25rem;
-  max-width: 1600px;
-  padding: 20px;
-  width: 100%;
+.masonry-wrapper {
+  gap: 20px;
+  align-items: flex-start;
+  margin: 20px;
 }
-@media (max-width: 1200px) {
-  #feed-container {
-    column-count: 2;
+.masonry-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+@media (max-width: 767px) {
+  .item-card, .item-card.is-note-card {
+    max-width: 100% !important;
+    width: 100% !important;
   }
-}
-@media (max-width: 768px) {
   #feed-container {
-    column-count: 1;
+    padding: 10px;
+    gap: 15px !important;
   }
 }
 .item-card.is-code-card {

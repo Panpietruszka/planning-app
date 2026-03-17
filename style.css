@@ -1,11 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-    /* Dodanie czcionki Consolas */
     --font-consolas: "Consolas", "monospace";
 }
 
-/* Dodanie Twojego własnego wariantu (zastępuje plugin JS) */
 @custom-variant btn-container-hover {
     &:where(.btn-container:hover &) {
         @slot;
@@ -14,27 +12,30 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+
 :root {
 
     --global-radius: 16px;
     --bg-rgba: 5, 5, 5;
     --modal-overlay-rgb: 2, 2, 2;
 
+    /* Blur and Opacity Dynamic Variables */
     --ui-blur: 20px;
     --ui-opacity: 0.95;
 
+    /* Background Colors */
     --bg: #050505;
     --bg-card: #0f0f0f;
     --bg-header: #161616;
     --bg-input: #000000;
 
-    /* Kolory tekstu */
+    /* Text Colors */
     --text-main: #e5e5e5;
     --text-muted: #a1a1aa;
     --text-secondary: #999999;
     --text-placeholder: #636366;
 
-    /* Kolory akcentowe i interaktywne */
+    /* Variables for main color inside application */
     --primary-color: #d97706;
     --primary-hover: #b45309;
     --primary-light: rgba(217, 119, 6, 0.2);
@@ -45,18 +46,19 @@
     --primary-color-dim: color-mix(in srgb, var(--primary-color), transparent 90%);
     --primary-border: var(--primary-color);
 
-    /* Kolory statusów */
+    /* Piority colors */
     --danger: #ff453a;
     --danger-hover: rgba(255, 69, 58, 0.1);
     --priority-low: #28c840;
     --priority-med: #febc2e;
     --priority-high: #ff5f57;
 
+    /* Accent Colors  */
     --accent-color: rgba(37, 99, 235, 0.2);
     --cursor-size: 15px;
     --cursor-bg: rgba(255, 255, 255, 0.3);
 
-    /* Bordery i cienie */
+    /* Border Colors */
     --border-light: rgba(255, 255, 255, 0.05);
     --border-medium: rgba(255, 255, 255, 0.1);
     --border-heavy: rgba(255, 255, 255, 0.15);
@@ -110,14 +112,14 @@ input::placeholder {
     border-radius: calc(var(--global-radius) * 0.625);
 }
 
-/* Nadpisanie scrollbara dla mniejszej szerokości */
+
 ::-webkit-scrollbar {
     width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: #333;
-    /* Tutaj też można dać zmienną, jeśli ma być spójne z --border-medium */
+
     border-radius: calc(var(--global-radius) * 0.625);
 }
 
@@ -170,7 +172,7 @@ main {
 }
 
 #editor-aside {
-    width: clamp(400px , 28vw, 700px);
+    width: clamp(400px, 28vw, 700px);
     position: fixed;
     top: 100px;
     right: 3vw;
@@ -201,11 +203,11 @@ main {
 }
 
 .item-card {
-    display: inline-block;
+    display: block;
     width: 100%;
     max-width: 400px;
-    margin-bottom: 1.5rem;
-    break-inside: avoid;
+    margin-bottom: 0;
+    break-inside: avoid-column;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid var(--border-light);
     background: rgba(255, 255, 255, 0.02);
@@ -213,13 +215,13 @@ main {
     cursor: pointer;
     overflow: hidden;
     border-radius: calc(var(--global-radius) * 1.5);
+    height: fit-content;
+    min-height: 50px;
 }
 
 .item-card.is-note-card {
     max-width: 350px;
-    /* Tutaj ustalasz szerokość notatki */
     width: 100%;
-    /* Zapobiega dziwnym zachowaniom w układzie kolumnowym */
     break-inside: avoid;
     display: flex;
 }
@@ -230,24 +232,33 @@ main {
     border-color: var(--primary-hover);
 }
 
-#feed-container {
-    display: block;
-    column-count: 3;
-    column-gap: 1.25rem;
-    max-width: 1600px;
-    padding: 20px;
-    width: 100%;
+.masonry-wrapper {
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px;
 }
 
-@media (max-width: 1200px) {
-    #feed-container {
-        column-count: 2;
+.masonry-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (max-width: 767px) {
+
+    .item-card,
+    .item-card.is-note-card {
+        max-width: 100% !important;
+        /* Pozwala karcie rozciągnąć się na całą szerokość kolumny */
+        width: 100% !important;
     }
-}
 
-@media (max-width: 768px) {
     #feed-container {
-        column-count: 1;
+        padding: 10px;
+        /* Opcjonalnie: mniejszy margines na mobile */
+        gap: 15px !important;
+        /* Mniejszy odstęp między kartami na mobile */
     }
 }
 
@@ -314,13 +325,13 @@ main {
     width: 16px;
     font-size: 10px;
     color: #666;
-    /* Można zastąpić var(--text-secondary) */
+
 }
 
 .coll-arrow.open {
     transform: rotate(90deg);
     color: var(--accent-color);
-    /* Upewnij się, że --accent jest zdefiniowane */
+
 }
 
 .sub-folder {
@@ -388,10 +399,10 @@ main {
 .type-pill.active {
     opacity: 1;
     border-color: var(--accent-color);
-    /* Upewnij się, że --accent jest zdefiniowane */
+
     background: rgba(0, 113, 227, 0.1);
     color: var(--accent-color);
-    /* Upewnij się, że --accent jest zdefiniowane */
+
 }
 
 .input-base {
@@ -406,7 +417,7 @@ main {
 
 .input-base:focus {
     border-color: var(--accent-color);
-    /* Upewnij się, że --accent jest zdefiniowane */
+
 }
 
 .item-actions {
@@ -541,17 +552,17 @@ aside {
 
 .bg-accent {
     background-color: var(--accent-color) !important;
-    /* Zmienna z oryginału */
+
 }
 
 .text-accent {
     color: var(--accent-color) !important;
-    /* Zmienna z oryginału */
+
 }
 
 .border-accent {
     border-color: var(--accent-color) !important;
-    /* Zmienna z oryginału */
+
 }
 
 .ring-accent {
@@ -564,7 +575,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 20px;
     height: 20px;
     background: var(--primary-color);
-    /* Kolory pasują do primary, można zostawić lub zrobić gradient zmiennych */
+
     border-radius: 50%;
     cursor: pointer;
     border: 2px solid var(--bg);
@@ -592,19 +603,19 @@ input[type="range"]::-moz-range-thumb {
     background-color: var(--primary-color) !important;
 }
 
-/* Elementy z tekstem primary */
+
 .text-primary {
     color: var(--primary-color) !important;
 }
 
-/* Border dla elementów takich jak karty na drugim zdjęciu */
+
 .main-element {
     border: 2px solid transparent;
-    /* Domyślnie przezroczysty */
+
     transition: border-color 0.2s ease;
 }
 
-/* ZMIANA KOLORU BORDER NA HOVER */
+
 .main-element:hover {
     border-color: var(--primary-border);
 }
@@ -616,18 +627,15 @@ input[type="range"]::-moz-range-thumb {
     width: 40px;
     height: 40px;
     border: none;
-    /* Użycie zmiennej z pierwszego przycisku (dostosuj mnożnik) */
     border-radius: calc(var(--global-radius) * 0.5);
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transition-duration: .3s;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-    /* Kolor tła dopasowany do hovera z pierwszego przycisku */
     background-color: var(--bg-color-second, rgb(255, 65, 65));
 }
 
-/* --- Reszta Twojego CSS pozostaje bez zmian, jeśli działają poprawnie --- */
 .sign {
     width: 100%;
     transition-duration: .3s;
@@ -657,7 +665,7 @@ input[type="range"]::-moz-range-thumb {
 
 .Btn:hover {
     width: 125px;
-    /* Użycie zmiennej przy hoverze */
+
     border-radius: calc(var(--global-radius) * 0.5);
     transition-duration: .3s;
 }
@@ -697,11 +705,6 @@ input[type="range"]::-moz-range-thumb {
     animation: shimmer 1.2s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-
-
-
-/* Styles for mobile */
-
 @media (max-width: 768px) {
 
     :root {
@@ -709,7 +712,8 @@ input[type="range"]::-moz-range-thumb {
         --spring-effect: cubic-bezier(0.5, 1.5, 0.5, 1);
     }
 
-    .main-site-top-header, .header-container {
+    .main-site-top-header,
+    .header-container {
         width: 100%;
         margin: 0;
         left: 0;
@@ -738,7 +742,6 @@ input[type="range"]::-moz-range-thumb {
     }
 
     .sidebar-container {
-        /* Layout */
         display: flex !important;
         position: fixed !important;
         top: 0;
@@ -747,15 +750,10 @@ input[type="range"]::-moz-range-thumb {
         height: 100dvh !important;
         z-index: 99999 !important;
         overflow: hidden;
-
-        /* Glassmorphism Ultra */
         background: rgba(10, 10, 10, 0.9) !important;
         backdrop-filter: blur(25px) saturate(200%) !important;
         -webkit-backdrop-filter: blur(25px) saturate(200%);
         border: none !important;
-
-        /* Stan Początkowy - Efekt "Clip-Path Reveal" */
-        /* Zaczynamy od małego koła w miejscu przycisku hamburgera (prawy górny róg) */
         clip-path: circle(0% at 90% 5%);
         opacity: 0;
         visibility: hidden;
@@ -776,7 +774,6 @@ input[type="range"]::-moz-range-thumb {
         max-height: 100%;
     }
 
-    /* Animacja zawartości - "Wave Entry" */
     .sidebar-container nav button {
         opacity: 0;
         transform: translateY(30px) rotateX(-30deg);
@@ -787,7 +784,6 @@ input[type="range"]::-moz-range-thumb {
             filter 0.6s var(--curve-main);
     }
 
-    /* Precyzyjny Staggering (opóźnienia fali) */
     .sidebar-container.mobile-open nav button:nth-child(1) {
         transition-delay: 0.2s;
     }
@@ -814,7 +810,6 @@ input[type="range"]::-moz-range-thumb {
         filter: blur(0);
     }
 
-    /* Przycisk zamknięcia - Pływający nad treścią */
     .mobile-close-btn {
         position: absolute;
         top: 20px;
@@ -822,7 +817,7 @@ input[type="range"]::-moz-range-thumb {
         width: 50px;
         height: 50px;
         border-radius: 20px;
-        /* Modern squircle */
+
         background: var(--primary-color) !important;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         border: none;
@@ -839,20 +834,19 @@ input[type="range"]::-moz-range-thumb {
         transform: scale(1) rotate(0deg);
     }
 
-    /* Naprawa Scrollbara wewnątrz menu */
+
     .sidebar-container::-webkit-scrollbar {
         width: 0px;
     }
 }
 
-/* Stylizacja nowej ikony dodawania */
 .custom-add-icon {
     stroke: var(--primary-light);
     fill: none;
 }
 
 .group:hover .custom-add-icon {
-    /* Delikatne wypełnienie przy najechaniu */
+
     fill: rgba(var(--primary-rgb), 0.1);
 }
 
@@ -868,18 +862,16 @@ input[type="range"]::-moz-range-thumb {
         gap: 8px !important;
     }
 
-    /* Dopasowanie rozmiaru ikony na bardzo małe ekrany */
+
     .custom-add-icon {
         width: 42px;
         height: 42px;
     }
 }
 
-/* Dodaj to do swojego pliku CSS */
-
 @media (max-width: 768px) {
 
-    /* 1. Główne okno na pełny ekran */
+
     #settings-modal>div {
         flex-direction: column;
         height: 100vh;
@@ -889,7 +881,6 @@ input[type="range"]::-moz-range-thumb {
         border: none;
     }
 
-    /* 2. Pasek boczny jako górna nawigacja */
     #settings-modal aside {
         width: 100%;
         height: auto;
@@ -904,12 +895,10 @@ input[type="range"]::-moz-range-thumb {
         padding-top: 50px;
     }
 
-    /* Ukrywamy /napis "System Configuration" na mobile, by oszczędzić miejsce */
     #settings-modal aside>div:first-child {
         display: none;
     }
 
-    /* Kontener nawigacji w poziomie */
     #settings-modal nav {
         flex-direction: row;
         width: 100%;
@@ -918,13 +907,11 @@ input[type="range"]::-moz-range-thumb {
         padding-bottom: 5px;
     }
 
-    /* Ukrywamy stopkę paska bocznego (przyciski Zapisz/Powrót przeniesiemy niżej lub zmienimy ich styl) */
     #settings-modal nav>div.pt-6 {
         display: none;
-        /* Ukrywamy te konkretne przyciski w menu bocznym */
+
     }
 
-    /* Styl przycisków menu w wersji poziomej */
     .settings-nav-item {
         padding: 8px 16px !important;
         width: auto !important;
@@ -933,41 +920,37 @@ input[type="range"]::-moz-range-thumb {
 
     .settings-nav-item div {
         display: none;
-        /* Ukrywamy pionowy pasek aktywności */
+
     }
 
     .settings-nav-item.active {
         background: rgba(255, 255, 255, 0.1);
     }
 
-    /* 3. Kontent główny - dopasowanie */
     #settings-main-content {
         height: 100%;
         padding-bottom: 80px;
-        /* Miejsce na przyciski akcji na dole */
+
     }
 
     .settings-content {
         padding: 24px !important;
-        /* Mniejszy padding niż p-12 */
+
     }
 
-    /* Zmniejszenie ogromnych nagłówków */
     .settings-content h1 {
         font-size: 2rem !important;
         letter-spacing: -0.02em;
     }
 
-    /* Siatka ustawień na 1 kolumnę */
+
     .grid-cols-2 {
         grid-template-columns: 1fr !important;
     }
 
-    /* 4. Pływające przyciski akcji na dole (opcjonalnie) */
-    /* Możesz dodać nowy kontener w HTML widoczny tylko na mobile lub zmodyfikować istniejący */
 }
 
-/* Fix dla scrollbara na mobile */
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }

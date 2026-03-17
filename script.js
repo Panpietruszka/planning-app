@@ -49,7 +49,6 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app)
 
-// --- ZMIANA: Złoty akcent zamiast niebieskiego ---
 const loginBtn = document.getElementById('btn-login');
 if (loginBtn) {
     loginBtn.onclick = async () => {
@@ -177,14 +176,12 @@ const i18n = {
     }
 };
 
-// Automatyczne wykrywanie języka
 let currentLang = navigator.language.startsWith('en') ? 'en' : 'pl';
 
 function translatePage() {
     const translations = i18n[currentLang];
     if (!translations) return;
 
-    // Przeszukujemy wszystkie elementy, które mogą zawierać tekst lub klucz
     const allElements = document.querySelectorAll('*');
 
     allElements.forEach(el => {
@@ -192,7 +189,6 @@ function translatePage() {
         let key = el.getAttribute('data-i18n-key');
         
         if (!key && el.childNodes.length > 0) {
-            // Szukamy klucza wewnątrz tekstu tylko przy pierwszym uruchomieniu
             el.childNodes.forEach(node => {
                 if (node.nodeType === Node.TEXT_NODE && node.textContent.includes("$t(")) {
                     const match = node.textContent.match(/\$t\(['"](.+?)['"]\)/);
@@ -204,13 +200,10 @@ function translatePage() {
             });
         }
 
-        // Jeśli mamy klucz, czyścimy element i wstawiamy TYLKO nowe tłumaczenie
         if (key && translations[key]) {
-            // Używamy textContent, aby usunąć wszystko co było wcześniej i wstawić czysty tekst
             el.textContent = translations[key];
         }
 
-        // --- LOGIKA DLA PLACEHOLDERÓW ---
         if (el.placeholder) {
             if (el.placeholder.includes("$t(")) {
                 const match = el.placeholder.match(/\$t\(['"](.+?)['"]\)/);
@@ -224,7 +217,6 @@ function translatePage() {
     });
 }
 
-// Przy starcie sprawdź, czy użytkownik już wcześniej zmieniał język
 const savedLang = localStorage.getItem('userLanguage');
 if (savedLang) {
     currentLang = savedLang;
@@ -233,14 +225,9 @@ if (savedLang) {
 document.addEventListener('DOMContentLoaded', translatePage)
 
 function changeLanguage(langCode) {
-    // 1. Aktualizujemy globalną zmienną języka
     currentLang = langCode;
-
-    // 2. (Opcjonalnie) Zapisujemy wybór w localStorage, 
-    // aby po zamknięciu i otwarciu rozszerzenia język został zapamiętany
     localStorage.setItem('userLanguage', langCode);
 
-    // 3. Wywołujemy funkcję tłumaczącą, którą przygotowaliśmy wcześniej
     translatePage();
 
     console.log("Language changed to: " + langCode);
@@ -251,9 +238,6 @@ if (googleBtn) {
     googleBtn.onclick = async () => {
         const provider = new GoogleAuthProvider();
         try {
-            // Firebase zajmuje się resztą! 
-            // Jeśli e-mail istnieje, Firebase zaloguje użytkownika.
-            // Jeśli nie istnieje, stworzy konto.
             await signInWithPopup(auth, provider);
         } catch (err) {
             if (err.code === 'auth/account-exists-with-different-credential') {
@@ -283,7 +267,6 @@ if (registerBtn) {
     };
 }
 
-// --- ZMIANA: Złoty akcent w ikonach (stroke="currentColor" pobierze złoty z CSS) ---
 const ICONS = {
     folder: `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="14" height="14" viewBox="0 0 512 512" xml:space="preserve">
@@ -461,10 +444,8 @@ function initAppForUser() {
     const user = auth.currentUser;
     if (!user) return;
 
-    // A. POKAZUJEMY SKELETONY (Zanim ruszy zapytanie do bazy)
     showSkeletonScreens();
 
-    // 1. Zapytanie o KOLEKCJE (zazwyczaj jest ich mało, zostawiamy onSnapshot)
     const qColl = query(
         collection(db, 'collections'),
         where("userId", "==", user.uid)
@@ -475,19 +456,22 @@ function initAppForUser() {
         renderSidebar();
     });
 
-    // 2. Zapytanie o PRZEDMIOTY (z limitem i bez blokowania UI)
     const qItems = query(
         collection(db, 'raindrop_items'),
         where("userId", "==", user.uid),
         orderBy('createdAt', 'desc'),
-        limit(itemsLimit) // KLUCZOWE: nie pobieramy całego archiwum na start
+        limit(itemsLimit)
     );
 
     onSnapshot(qItems, snap => {
-        // Sprawdzamy, czy to pierwsze ładowanie (żeby nie dodawać pojedynczo przy starcie)
         if (isInitialLoading) {
             items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderFeed();
+
+            setTimeout(() => {
+                initMasonry();
+            }, 1000);
+
             isInitialLoading = false;
             return;
         }
@@ -497,28 +481,29 @@ function initAppForUser() {
 
             if (change.type === "added") {
                 items.unshift(docData);
-                // Funkcja, która doda tylko 1 nowy element na górę listy w HTML
                 prependSingleElementToUI(docData);
+
+                const newElement = document.querySelector(`[data-id="${docData.id}"]`);
+                if (newElement) {
+                    setTimeout(() => resizeGridItem(newElement), 50);
+                }
             }
             if (change.type === "modified") {
                 const index = items.findIndex(item => item.id === docData.id);
                 if (index !== -1) items[index] = docData;
-                // Funkcja, która znajdzie element po ID i zmieni tylko jego treść
                 updateSingleElementInUI(docData);
             }
             if (change.type === "removed") {
                 items = items.filter(item => item.id !== docData.id);
-                // Funkcja usuwająca element z DOM
                 removeElementFromUI(docData.id);
             }
         });
 
-        renderSidebar(); // Odśwież liczniki w sidebarze
+        renderSidebar();
     }, (error) => {
         console.error("Snapshot Error:", error);
     });
 
-    // Ikona folderu
     const iconAllContainer = document.getElementById('icon-all');
     if (iconAllContainer) iconAllContainer.innerHTML = ICONS.folder;
 }
@@ -527,7 +512,6 @@ function showSkeletonScreens() {
     const feedContainer = document.getElementById('feed-container');
     if (!feedContainer) return;
 
-    // Tworzymy 6 placeholderów, które udają karty z plikami
     const skeletonHTML = Array(6).fill(0).map(() => `
         <div class="skeleton-card">
             <div class="skeleton-image"></div>
@@ -543,29 +527,22 @@ onAuthStateChanged(auth, async (user) => {
     const overlay = document.getElementById('auth-overlay');
     const userDisplayName = document.getElementById('user-display-name');
     const userAvatar = document.getElementById('user-avatar');
-
-    // Pobieramy oba przyciski
     const loginTrigger = document.getElementById('btn-login-trigger');
     const logoutBtn = document.getElementById('logout-btn');
 
     if (user) {
-        // --- UŻYTKOWNIK ZALOGOWANY ---
         if (overlay) overlay.style.display = 'none';
 
-        // Pokaż Logout, Ukryj Login
         if (logoutBtn) logoutBtn.style.display = '';
         if (loginTrigger) loginTrigger.style.display = 'none';
 
         if (logoutBtn) {
             logoutBtn.onclick = async () => {
                 try {
-                    // 1. Wylogowanie z Firebase
                     await signOut(auth);
 
-                    // 2. Czyszczenie danych z localStorage (jeśli tam przechowujesz ustawienia)
                     localStorage.clear();
 
-                    // 3. "Micro odświeżenie" - przeładowanie strony, co czyści zmienne w pamięci JS
                     window.location.reload();
 
                     console.log("Wylogowano pomyślnie i zresetowano stan.");
@@ -584,21 +561,17 @@ onAuthStateChanged(auth, async (user) => {
         loadUserSettings(user);
         initAppForUser();
     } else {
-        // --- UŻYTKOWNIK NIEZALOGOWANY (GOŚĆ) ---
-        if (overlay) overlay.style.display = 'none'; // Nie blokujemy aplikacji
+        if (overlay) overlay.style.display = 'none';
 
-        // Pokaż Login, Ukryj Logout
         if (loginTrigger) loginTrigger.style.display = 'block';
         if (logoutBtn) logoutBtn.style.display = 'none';
 
-        // Kliknięcie w "Zaloguj się" otwiera Twój panel Firebase
         if (loginTrigger) {
             loginTrigger.onclick = () => {
                 if (overlay) overlay.style.display = 'flex';
             };
         }
 
-        // Reset danych widocznych dla gościa
         if (userDisplayName) userDisplayName.textContent = "Guest";
         if (userAvatar) userAvatar.innerHTML = "";
 
@@ -610,7 +583,6 @@ onAuthStateChanged(auth, async (user) => {
     isInitialLoading = false;
 });
 
-// Obsługa przycisków
 document.getElementById('btn-login').onclick = async () => {
     const e = document.getElementById('auth-email').value;
     const p = document.getElementById('auth-password').value;
@@ -654,21 +626,16 @@ document.getElementById('proj-name-in').onkeydown = async (e) => {
     }
 };
 
-// --- NOWE FUNKCJE POMOCNICZE UI ---
-
 function updateSingleElementInUI(data) {
     const element = document.querySelector(`[data-id="${data.id}"]`);
     if (element) {
-        // Podmieniamy środek karty
         element.innerHTML = createCardContentHTML(data);
 
-        // Ponowne odpalenie ładowania zdjęcia, jeśli typ to obraz
         const isImage = data.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(data.content || '');
         if (isImage) {
             loadImagesInBackground([data]);
         }
 
-        // Efekt wizualny "mignięcia"
         element.style.transition = 'background-color 0.5s';
         element.style.backgroundColor = 'rgba(252, 211, 84, 0.1)';
         setTimeout(() => element.style.backgroundColor = '', 1000);
@@ -679,17 +646,14 @@ function prependSingleElementToUI(data) {
     const container = document.getElementById('feed-container');
     if (!container) return;
 
-    // --- DODAJ TO: Rozpoznawanie typu dla nowej karty ---
     const isLink = data.type === 'link';
     const isCode = data.type === 'code';
     const isFile = data.type === 'file';
     const isNote = !isLink && !isCode && !isFile;
     const noteClass = isNote ? 'is-note-card' : '';
-    // --------------------------------------------------
 
     const div = document.createElement('div');
     div.setAttribute('data-id', data.id);
-    // DODAJ noteClass do listy klas:
     div.className = `item-card p-6 flex flex-col group transition-all ${noteClass}`;
     div.style.borderRadius = "var(--global-radius)";
     div.onclick = () => window.openEditor(data.id);
@@ -711,20 +675,16 @@ function removeElementFromUI(id) {
         setTimeout(() => element.remove(), 300);
     }
 }
-// --- ZMIANA: Obsługa filtrów z użyciem zmiennych CSS ---
 document.querySelectorAll('.view-filter').forEach(btn => {
     btn.onclick = () => {
-        // Usuń klasę aktywną ze wszystkich (zakładamy, że klasa to np. 'active-filter')
         document.querySelectorAll('.view-filter').forEach(b => {
             b.classList.remove('bg-white/10', 'text-white');
             b.classList.add('text-gray-400');
         });
 
-        // Dodaj klasę do klikniętego - tutaj używamy klasy, która w CSS ma ustawiony kolor ze zmiennej
         btn.classList.remove('text-gray-400');
         btn.classList.add('bg-white/10', 'text-white');
 
-        // Zmień filtr i odśwież feed
         activeTypeFilter = btn.dataset.type;
         renderFeed();
     };
@@ -751,7 +711,6 @@ function renderFolder(folder) {
     const itemsHtml = folderItems.map(item => {
         let iconHtml = ICONS.file;
         if (item.type === 'link') {
-            // ZMIANA: rounded-sm -> style
             iconHtml = item.linkData?.favicon
                 ? `<img src="${item.linkData.favicon}" style="border-radius: var(--global-radius);" class="w-4 h-4">`
                 : ICONS.link;
@@ -783,8 +742,6 @@ function renderFolder(folder) {
     }).join('');
 
     const folderIcon = folder.isAutoGenerated ? ICONS.folder : ICONS.folder;
-    // Jeśli chcesz użyć innej ikony dla "box", a nie masz jej w ICONS, 
-    // upewnij się, że dodałeś ją do obiektu ICONS na górze kodu.
 
     return `
     <div class="folder-group mb-2">
@@ -810,16 +767,13 @@ function renderFolder(folder) {
     </div>`;
 }
 
-// Globalna zmienna do śledzenia ile elementów już wyrenderowaliśmy
 let renderedCount = 0;
-const ITEMS_PER_BATCH = 15; // Ile elementów renderować na raz
-let allFilteredItems = []; // Zmienna pomocnicza do przechowywania przefiltrowanych danych
-// 1. GŁÓWNA FUNKCJA: Przygotowuje dane i czyści kontener
+const ITEMS_PER_BATCH = 15;
+let allFilteredItems = [];
 function renderFeed() {
     const container = document.getElementById('feed-container');
     if (!container) return;
 
-    // Logika filtrowania
     allFilteredItems = items.filter(i => {
         const contentLower = (i.content || '').toLowerCase();
         const matchSearch = contentLower.includes(searchQuery.toLowerCase());
@@ -828,20 +782,17 @@ function renderFeed() {
         return matchSearch && matchColl && matchType;
     });
 
-    container.innerHTML = ''; // Czyścimy widok
-    renderedCount = 0;        // Resetujemy licznik partii
+    renderedCount = 0;
 
-    renderBatch(); // Wywołujemy pierwszą partię
+    renderBatch();
 }
 
-// 1. Funkcja generująca TYLKO środek karty (do wielokrotnego użytku)
 function createCardContentHTML(i) {
     const pClass = i.priority === 'high' ? 'dot-high' : (i.priority === 'low' ? 'dot-low' : 'dot-med');
     const isLink = i.type === 'link';
     const isCode = i.type === 'code';
     const isImage = i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || '');
 
-    // Ikony i podglądy kodu
     let mainIconHtml = isCode ? '💻' : (i.type === 'file' ? '📄' : '📝');
     if (isLink) {
         mainIconHtml = (i.linkData && i.linkData.favicon)
@@ -866,7 +817,6 @@ function createCardContentHTML(i) {
         }
     }
 
-    // Dynamiczna logika przycisku
     let actionBtnHtml = '';
     const btnText = isLink ? 'Open Website' : 'Open File';
     const btnUrl = isLink ? i.linkData?.fullUrl : i.fileUrl;
@@ -912,16 +862,13 @@ function renderBatch() {
     if (nextBatch.length === 0) return;
 
     const htmlBatch = nextBatch.map(i => {
-        // --- MOJA POPRAWKA TUTAJ ---
-        // Definiujemy te same zmienne co w createCardContentHTML, żeby mieć pewność
+
         const isLink = i.type === 'link';
         const isCode = i.type === 'code';
         const isFile = i.type === 'file';
 
-        // Notatka to coś, co nie jest żadnym z powyższych
         const isNote = !isLink && !isCode && !isFile;
         const noteClass = isNote ? 'is-note-card' : '';
-        // ---------------------------
 
         return `
         <div data-id="${i.id}" 
@@ -935,25 +882,22 @@ function renderBatch() {
     container.insertAdjacentHTML('beforeend', htmlBatch);
     renderedCount += nextBatch.length;
 
-    // Obsługa obrazów w tle
     const imagesInThisBatch = nextBatch.filter(i => i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || ''));
     if (imagesInThisBatch.length > 0) {
         loadImagesInBackground(imagesInThisBatch);
     }
 
-    // Inicjalizacja obserwatora dla Infinite Scroll
     if (renderedCount < allFilteredItems.length && typeof createObserver === 'function') {
         createObserver();
     }
 }
 
-// 3. FUNKCJA TŁA: Pobiera zdjęcia i loguje PROCENTY w konsoli
 function loadImagesInBackground(imageItems) {
     let loadedCount = 0;
     const total = imageItems.length;
 
     imageItems.forEach((item, index) => {
-        // Stagger: wysyłamy zapytania co 50ms, żeby nie zapchać kolejki przeglądarki
+
         setTimeout(() => {
             const placeholder = document.getElementById(`bg-load-${item.id}`);
             if (!placeholder) {
@@ -990,7 +934,6 @@ function loadImagesInBackground(imageItems) {
     }
 }
 
-// Funkcja obserwująca czy użytkownik dojechał do końca
 function createObserver() {
     const container = document.getElementById('feed-container');
     const items = container.querySelectorAll('.item-card');
@@ -1000,10 +943,10 @@ function createObserver() {
 
     const observer = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-            observer.unobserve(lastItem); // Przestań obserwować stary ostatni element
-            renderBatch(); // Renderuj kolejną partię
+            observer.unobserve(lastItem);
+            renderBatch();
         }
-    }, { threshold: 0.5 }); // Wywołaj gdy 50% elementu jest widoczne
+    }, { threshold: 0.5 });
 
     observer.observe(lastItem);
 }
@@ -1017,7 +960,6 @@ window.openEditor = (id) => {
     const editorAside = document.getElementById('editor-aside');
     editorAside.classList.remove('translate-x-full');
 
-    // ZMIANA: rounded-2xl -> style
     document.getElementById('editor-form').innerHTML = `
         <div class="space-y-6">
             <div>
@@ -1364,7 +1306,6 @@ document.getElementById('nav-all').onclick = () => window.setCollection('all');
 document.getElementById('nav-favs').onclick = () => window.setCollection('favs');
 document.getElementById('global-search').oninput = (e) => { searchQuery = e.target.value; renderFeed(); };
 
-// --- ZAAWANSOWANA LOGIKA USTAWIEŃ ---
 const settingsModal = document.getElementById('settings-modal');
 const settingsBtn = document.getElementById('settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings-full');
@@ -1423,7 +1364,6 @@ document.querySelectorAll('.accent-picker').forEach(button => {
 
         if (customColorPicker) customColorPicker.value = selectedAccentColor;
 
-        // Aplikujemy kolor do CSS
         applyPrimaryColor(selectedAccentColor);
 
         window.autoSaveSettings();
@@ -1437,40 +1377,29 @@ function updateRadius(value) {
 
 function applyPrimaryColor(color) {
     const root = document.documentElement;
-
-    // 1. Ustawiamy główny kolor
     root.style.setProperty('--primary-color', color);
-
-    // 2. Obliczamy kolor tekstu kontrastującego
     const textColor = getContrastColor(color);
-    root.style.setProperty('--primary-text-color', textColor); // DODAJEMY TĘ ZMIENNĄ
+    root.style.setProperty('--primary-text-color', textColor);
 
-    // 3. Obliczamy i ustawiamy kolor hover
     const hoverColor = `color-mix(in srgb, ${color}, black 15%)`;
     root.style.setProperty('--primary-hover', hoverColor);
 
-    // 4. Inne pochodne kolory
     const lightColor = `color-mix(in srgb, ${color}, white 90%)`;
     root.style.setProperty('--primary-light', lightColor);
     root.style.setProperty('--primary-dim', `color-mix(in srgb, ${color}, transparent 80%)`);
 
-    // 5. Zapisujemy kolor ringu
     root.style.setProperty('--primary-ring', color + '33');
 }
 
 function getContrastColor(hexColor) {
-    // Usuń '#' jeśli jest
     const hex = hexColor.replace('#', '');
 
-    // Konwersja hex na RGB
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    // Obliczenie luminancji (wzór W3C)
     const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
-    // Jeśli jasność > 128, kolor jest jasny -> zwróć czarny, w przeciwnym razie biały
     return (yiq >= 128) ? '#000000' : '#ffffff';
 }
 
@@ -1478,10 +1407,8 @@ window.autoSaveSettings = async () => {
     const user = auth.currentUser;
     if (!user) return;
 
-    // Pobieramy język wybrany w select
     const selectedLang = document.getElementById('settings-language')?.value || "pl";
 
-    // Pobieramy kolor (z pickera lub zmiennej)
     const currentColor = customColorPicker ? customColorPicker.value : selectedAccentColor;
 
     const settingsData = {
@@ -1502,15 +1429,12 @@ window.autoSaveSettings = async () => {
     };
 
     try {
-        // Zapis do Firebase
         await setDoc(doc(db, "users", user.uid), { settings: settingsData }, { merge: true });
 
-        // --- KLUCZOWE: Zmiana języka na żywo ---
         if (typeof currentLang !== 'undefined') {
-            currentLang = selectedLang; // Ustawienie globalnej zmiennej na nową wartość
-            translatePage(); // Uruchomienie tłumaczenia całego DOM
+            currentLang = selectedLang;
+            translatePage();
         }
-        // ---------------------------------------
 
         applyInstantChanges(settingsData);
     } catch (err) {
@@ -1518,24 +1442,19 @@ window.autoSaveSettings = async () => {
     }
 };
 
-// --- 4. FUNKCJA ŁADOWANIA DANYCH ---
-// --- 4. PEŁNA FUNKCJA ŁADOWANIA DANYCH ---
 async function loadUserSettings() {
     const user = auth.currentUser;
     if (!user) return;
 
     try {
-        // 1. Pobierz dane (to musi poczekać, ale robimy to w tle)
+
         const userDoc = await getDoc(doc(db, "users", user.uid));
 
         if (userDoc.exists()) {
             const data = userDoc.data();
             const s = data.settings || {};
 
-            // 2. Używamy requestAnimationFrame, aby przeglądarka nie zacięła się
-            // przy aktualizacji kilkudziesięciu elementów DOM naraz.
             requestAnimationFrame(() => {
-                // --- KOSMETYKA DOM (Szybkie operacje) ---
                 if (document.getElementById('settings-display-name')) {
                     document.getElementById('settings-display-name').value = s.displayName || "";
                 }
@@ -1543,7 +1462,6 @@ async function loadUserSettings() {
                     document.getElementById('settings-language').value = s.language || "pl";
                 }
 
-                // Checkboxy
                 const checks = {
                     'push-notifications': s.notifications,
                     'sound-effects': s.soundEffects,
@@ -1557,12 +1475,10 @@ async function loadUserSettings() {
                     if (el) el.checked = val ?? true;
                 }
 
-                // Suwaki i etykiety
                 updateSlider('ui-opacity', 'opacity-val', s.uiOpacity, 90, '%');
                 updateSlider('ui-radius', 'radius-val', s.uiRadius, 12, 'px');
                 updateSlider('system-volume', 'volume-val', s.systemVolume, 80, '%');
 
-                // Kolory
                 if (s.accentColor) {
                     selectedAccentColor = s.accentColor;
                     if (customColorPicker) customColorPicker.value = s.accentColor;
@@ -1570,7 +1486,6 @@ async function loadUserSettings() {
                     applyPrimaryColor(s.accentColor);
                 }
 
-                // 3. Dopiero teraz aplikujemy zmiany do CSS (to może być ciężkie)
                 applyInstantChanges(s);
             });
 
@@ -1581,7 +1496,6 @@ async function loadUserSettings() {
     }
 }
 
-// Funkcja pomocnicza, żeby nie powtarzać kodu dla suwaków
 function updateSlider(inputId, labelId, value, defaultValue, unit) {
     const input = document.getElementById(inputId);
     const label = document.getElementById(labelId);
@@ -1598,36 +1512,26 @@ function setVh() {
 window.addEventListener('resize', setVh);
 setVh();
 
-// Zoptymalizowana funkcja applyInstantChanges
 function applyInstantChanges(s) {
     if (!s || typeof s !== 'object') return;
     const root = document.documentElement;
 
-    // Używamy requestAnimationFrame, aby zmiany w CSS działy się 
-    // w płynny sposób, nie blokując renderowania.
     requestAnimationFrame(() => {
 
-        // 1. KOLORY (Accent)
         if (s.accentColor) {
             applyPrimaryColor(s.accentColor);
         }
 
-        // 2. RADIUS (Zaokrąglenie)
         if (s.uiRadius !== undefined) {
             root.style.setProperty('--global-radius', s.uiRadius + 'px');
-            // Zaktualizuj etykietę tylko jeśli użytkownik jest w ustawieniach
             const radiusDisplay = document.getElementById('radius-val');
             if (radiusDisplay) radiusDisplay.innerText = s.uiRadius + 'px';
         }
 
-        // 3. DYNAMICZNE OPACITY I BLUR
         if (s.uiOpacity !== undefined) {
             const opacityValue = s.uiOpacity / 100;
-            // Obliczamy blur tylko raz
             const blurValue = opacityValue * 16;
 
-            // Używamy zmiennych CSS bezpośrednio na root, żeby działało wszędzie,
-            // nie tylko na modalElement (chyba że celowo ma być tylko na modalu)
             root.style.setProperty('--ui-opacity', opacityValue);
             root.style.setProperty('--ui-blur', `${blurValue}px`);
 
@@ -1635,7 +1539,6 @@ function applyInstantChanges(s) {
             if (opacityDisplay) opacityDisplay.innerText = s.uiOpacity + '%';
         }
 
-        // 4. DISPLAY NAME
         if (s.displayName) {
             const uiName = document.getElementById('user-display-name');
             if (uiName) uiName.textContent = s.displayName;
@@ -1660,43 +1563,36 @@ if (saveChangesBtn) {
 if (customColorPicker) {
     customColorPicker.addEventListener('input', (e) => {
         const color = e.target.value;
-        // Zastosuj kolor natychmiast
         applyPrimaryColor(color);
-        // Zaktualizuj UI przycisków (opcjonalnie, zdejmuje aktywność z innych)
         updateAccentUI(color);
-        // Automatyczny zapis
         window.autoSaveSettings();
     });
 }
 document.getElementById('ui-radius')?.addEventListener('input', (e) => applyInstantChanges({ uiRadius: e.target.value }));
 document.getElementById('ui-opacity')?.addEventListener('input', (e) => applyInstantChanges({ uiOpacity: e.target.value }));
 
-// Funkcja inicjalizująca menu
 function initMobileMenu() {
     const sidebar = document.querySelector('.sidebar-container');
     const toggleBtn = document.getElementById('mobile-menu-toggle');
 
     if (!sidebar || !toggleBtn) return;
 
-    // Dodaj przycisk X do sidebaru, jeśli go nie ma
     if (!document.querySelector('.mobile-close-btn')) {
         const closeBtn = document.createElement('button');
         closeBtn.innerHTML = '✕';
         closeBtn.className = 'mobile-close-btn md:hidden';
-        sidebar.prepend(closeBtn); // Dodaj na samą górę sidebaru
+        sidebar.prepend(closeBtn);
 
         closeBtn.onclick = () => {
             sidebar.classList.remove('mobile-open');
         };
     }
 
-    // Otwieranie hamburgerem
     toggleBtn.onclick = (e) => {
         e.preventDefault();
         sidebar.classList.add('mobile-open');
     };
 
-    // Zamykanie po kliknięciu w dowolny przycisk wewnątrz sidebaru (opcjonalne)
     sidebar.querySelectorAll('button:not(.mobile-close-btn)').forEach(btn => {
         btn.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
@@ -1706,16 +1602,13 @@ function initMobileMenu() {
     });
 }
 
-// Uruchom po załadowaniu DOM
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMobileMenu);
 } else {
     initMobileMenu();
 }
 
-// Uruchom tłumaczenie, gdy strona się załaduje
 document.addEventListener('DOMContentLoaded', () => {
-    // Opcjonalnie: odczytaj język z pamięci przeglądarki
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang) {
         currentLang = savedLang;
@@ -1723,3 +1616,106 @@ document.addEventListener('DOMContentLoaded', () => {
 
     translatePage();
 });
+function rebuildMasonry(preferredColumns = null) {
+    const container = document.getElementById('feed-container');
+    const items = Array.from(document.querySelectorAll('.item-card'));
+    if (!container || items.length === 0) return;
+
+    const containerWidth = container.offsetWidth;
+    let columnsCount;
+
+    if (preferredColumns) {
+        columnsCount = preferredColumns;
+    } else {
+        if (window.innerWidth < 768) {
+            columnsCount = 1;
+        } else {
+            columnsCount = Math.max(1, Math.floor(containerWidth / 350));
+        }
+    }
+    const gap = 20;
+    
+    container.innerHTML = '';
+    container.style.display = 'flex';
+    container.style.gap = `${gap}px`;
+    container.style.alignItems = 'flex-start';
+
+    const columns = [];
+    for (let i = 0; i < columnsCount; i++) {
+        const col = document.createElement('div');
+        col.className = 'masonry-column';
+        col.style.flex = '1';
+        col.style.display = 'flex';
+        col.style.flexDirection = 'column';
+        col.style.gap = `${gap}px`;
+        container.appendChild(col);
+        columns.push(col);
+    }
+
+    items.forEach(item => {
+        item.style.width = '100%';
+
+        const shortestColumn = columns.reduce((prev, curr) => {
+            return (prev.offsetHeight <= curr.offsetHeight) ? prev : curr;
+        });
+
+        shortestColumn.appendChild(item);
+    });
+}
+
+function initMasonry() {
+    rebuildMasonry();
+
+    const images = document.querySelectorAll('.item-card img');
+    images.forEach(img => {
+        img.addEventListener('load', rebuildMasonry);
+        img.addEventListener('error', rebuildMasonry);
+    });
+
+    window.addEventListener('load', rebuildMasonry);
+
+    setTimeout(rebuildMasonry, 500);
+    setTimeout(rebuildMasonry, 1000);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMasonry);
+} else {
+    initMasonry();
+}
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(rebuildMasonry, 100);
+});
+
+document.addEventListener('DOMContentLoaded', initMasonry);
+document.addEventListener('DOMContentLoaded', initMasonry);
+window.addEventListener('load', rebuildMasonry);
+
+setTimeout(rebuildMasonry, 300);
+
+function resizeGridItem(item) {
+    const grid = document.getElementById('feed-container');
+    if (!grid) return;
+
+    const gridStyle = window.getComputedStyle(grid);
+    const rowHeight = parseInt(gridStyle.getPropertyValue('grid-auto-rows')) || 1;
+    const rowGap = parseInt(gridStyle.getPropertyValue('grid-row-gap')) || 0;
+
+    const content = item.querySelector('.card-content') || item.firstElementChild;
+    const contentHeight = content.getBoundingClientRect().height;
+
+    const rowSpan = Math.ceil((contentHeight + rowGap) / (rowHeight + rowGap));
+
+    requestAnimationFrame(() => {
+        item.style.gridRowEnd = `span ${rowSpan}`;
+    });
+}
+const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+        resizeGridItem(entry.target);
+    }
+});
+document.addEventListener('DOMContentLoaded', initMasonry);
