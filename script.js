@@ -454,6 +454,7 @@ function initAppForUser() {
     onSnapshot(qColl, snap => {
         collections = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderSidebar();
+        renderFeed();
     });
 
     const qItems = query(
@@ -771,20 +772,99 @@ let renderedCount = 0;
 const ITEMS_PER_BATCH = 15;
 let allFilteredItems = [];
 function renderFeed() {
-    const container = document.getElementById('feed-container');
-    if (!container) return;
+    const feedContainer = document.getElementById('feed-container');
+    if (!feedContainer) return;
 
-    allFilteredItems = items.filter(i => {
-        const contentLower = (i.content || '').toLowerCase();
-        const matchSearch = contentLower.includes(searchQuery.toLowerCase());
-        const matchColl = activeCollection === 'all' ? true : (activeCollection === 'favs' ? i.isFav : i.collectionId === activeCollection);
-        const matchType = activeTypeFilter === 'all' ? true : i.type === activeTypeFilter;
-        return matchSearch && matchColl && matchType;
+    // 1. Resetujemy widok
+    feedContainer.innerHTML = '';
+    renderedCount = 0; // Ważne dla Twojego systemu batchingu
+
+    let foldersToRender = [];
+    let itemsToRender = [];
+
+    // 2. Logika wyboru danych
+    if (!activeCollection || activeCollection === 'all') {
+        // Widok główny: Foldery "root" + wszystkie pliki
+        foldersToRender = collections.filter(f => f.parentId === 'global' || !f.parentId);
+        itemsToRender = items;
+    } else {
+        // Widok kolekcji: Podfoldery + pliki z tej kolekcji
+        foldersToRender = collections.filter(f => f.parentId === activeCollection);
+        itemsToRender = items.filter(i => i.collectionId === activeCollection);
+    }
+
+    // 3. Renderowanie Folderów (jako karty Grid)
+    foldersToRender.forEach(folder => {
+        const folderCard = document.createElement('div');
+        // Używamy Twojej klasy item-card dla identycznego wyglądu
+        folderCard.className = 'grid-item item-card animate-slide-up flex flex-col p-6 cursor-pointer';
+        folderCard.style.borderRadius = "var(--global-radius)";
+        folderCard.style.background = "var(--bg-card)";
+        folderCard.style.border = "1px solid rgba(255,255,255,0.05)";
+
+        folderCard.innerHTML = `
+            <div class="card-content flex items-center gap-4 py-2">
+                <div class="w-12 h-12 bg-amber-500/10 text-amber-500 flex items-center justify-center rounded-xl text-2xl">
+                    ${ICONS.folder}
+                </div>
+                <div class="truncate">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Kolekcja</p>
+                    <p class="text-sm font-semibold truncate text-gray-200">${folder.name.toUpperCase()}</p>
+                </div>
+            </div>
+        `;
+
+        folderCard.onclick = () => window.setCollection(folder.id);
+        feedContainer.appendChild(folderCard);
+
+        // Musimy zmierzyć wysokość folderu dla Masonry
+        resizeGridItem(folderCard);
     });
 
-    renderedCount = 0;
+    // 4. Renderowanie Plików/Linków
+    itemsToRender.forEach(item => {
+        const isNote = item.type !== 'link' && item.type !== 'code' && item.type !== 'file';
+        const noteClass = isNote ? 'is-note-card' : '';
 
-    renderBatch();
+        const card = document.createElement('div');
+        card.setAttribute('data-id', item.id);
+        // Dodajemy 'grid-item' - kluczowe dla Twojej funkcji resizeGridItem
+        card.className = `grid-item item-card p-6 flex flex-col group transition-all animate-slide-up ${noteClass}`;
+        card.style.borderRadius = "var(--global-radius)";
+        card.onclick = () => window.openEditor(item.id);
+
+        // Używamy Twojej oryginalnej funkcji treści
+        card.innerHTML = createCardContentHTML(item);
+
+        feedContainer.appendChild(card);
+
+        // Obsługa obrazów dla Masonry
+        const imgInside = card.querySelector('img');
+        if (imgInside) {
+            // Jeśli obrazek już jest w cache, resize od razu, jeśli nie - po załadowaniu
+            if (imgInside.complete) {
+                resizeGridItem(card);
+            } else {
+                imgInside.onload = () => resizeGridItem(card);
+            }
+        } else {
+            resizeGridItem(card);
+        }
+    });
+
+    // 5. Finalizacja i ładowanie obrazów w tle
+    const imagesToLoad = itemsToRender.filter(i =>
+        i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || '')
+    );
+
+    if (imagesToLoad.length > 0) {
+        loadImagesInBackground(imagesToLoad);
+    }
+
+    // Wymuszamy przeliczenie siatki po krótkiej chwili
+    setTimeout(() => {
+        if (typeof rebuildMasonry === 'function') rebuildMasonry();
+    }, 200);
 }
 
 function createCardContentHTML(i) {
@@ -792,6 +872,11 @@ function createCardContentHTML(i) {
     const isLink = i.type === 'link';
     const isCode = i.type === 'code';
     const isImage = i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.content || '');
+
+    let subTitlte = '';
+    if (isLink && i.linkData?.fullUrl) subTitlte = i.linkData.fullUrl;
+    else if (i.isFile ** i.fileName) subTittle = i.fileName;
+    else if (i.type === 'code') subTittle = 'source_code.js';
 
     let mainIconHtml = isCode ? '💻' : (i.type === 'file' ? '📄' : '📝');
     if (isLink) {
@@ -838,19 +923,34 @@ function createCardContentHTML(i) {
 
     return `
         <div class="card-priority-indicator ${pClass}"></div>
-        <div class="flex justify-between items-start mb-4">
+        
+        <div class="flex justify-between items-start mb-4 details-hide-header">
             <div class="w-10 h-10 bg-white/5 flex items-center justify-center text-lg rounded-lg">${mainIconHtml}</div>
-            <button class="text-xl ${i.isFav ? 'text-amber-500' : 'text-gray-600'}" onclick="event.stopPropagation(); window.toggleFav('${i.id}', ${i.isFav})">
+            <button class="favorite-btn text-xl ${i.isFav ? 'text-amber-500' : 'text-gray-600'}" 
+                    onclick="event.stopPropagation(); window.toggleFav('${i.id}', ${i.isFav})">
                 ${i.isFav ? '⭐' : '☆'}
             </button>
         </div>
-        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">${i.type}</p>
-        <p class="text-sm font-semibold truncate mb-1 text-gray-200">
-            ${isLink && i.linkData?.title ? i.linkData.title : (isCode ? 'Code snippet' : i.content)}
-        </p>
+
+        <div class="card-body-wrapper">
+            <div class="icon-details-view">${mainIconHtml}</div>
+            <div class="card-content-text">
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 type-label">${i.type}</p>
+                <p class="text-sm font-semibold truncate mb-1 text-gray-200 main-title">
+                    ${isLink && i.linkData?.title ? i.linkData.title : (isCode ? 'Code snippet' : i.content)}
+                </p>
+                ${subTitlte ? `<p class="item-subtitle text-[11px] text-gray-500 truncate">${subTitlte}</p>` : ''}
+            </div>
+        </div>
+
         ${filePreviewHtml}
         ${codePreviewHtml}
         ${actionBtnHtml}
+        
+        <button class="favorite-btn-details ${i.isFav ? 'text-amber-500' : 'text-gray-600'}" 
+                onclick="event.stopPropagation(); window.toggleFav('${i.id}', ${i.isFav})">
+            ${i.isFav ? '⭐' : '☆'}
+        </button>
     `;
 }
 
@@ -1257,7 +1357,13 @@ document.addEventListener('click', (e) => {
     }
 });
 
-window.setCollection = (id) => { activeCollection = id; renderFeed(); renderSidebar(); };
+window.setCollection = (id) => {
+    activeCollection = id;
+    // Resetujemy scroll, żeby użytkownik nie był w połowie strony po wejściu do folderu
+    window.scrollTo(0, 0);
+    renderSidebar(); // Żeby podświetlić aktywny folder w panelu bocznym
+    renderFeed();    // Żeby wyświetlić nową zawartość
+};
 window.toggleExpand = (e, id) => { e.stopPropagation(); expandedCollections.has(id) ? expandedCollections.delete(id) : expandedCollections.add(id); renderSidebar(); };
 window.toggleFav = async (id, cur) => await updateDoc(doc(db, 'raindrop_items', id), { isFav: !cur });
 window.quickDelete = async (id) => {
@@ -1602,6 +1708,33 @@ function initMobileMenu() {
     });
 }
 
+function changeViewMode(mode) {
+    const container = document.getElementById('feed-container');
+    if (!container) return;
+
+    // Usuwamy wszystkie poprzednie klasy widoku
+    container.classList.remove('view-small', 'view-medium', 'view-large', 'view-details');
+
+
+    container.classList.add(mode);
+
+    localStorage.setItem('preferredViewMode', mode);
+
+    if (typeof rebuildMasonry === 'function') {
+        setTimeout(rebuildMasonry, 50);
+    }
+}
+
+window.changeViewMode = changeViewMode;
+
+// Inicjalizacja zapisanego widoku przy starcie strony
+document.addEventListener('DOMContentLoaded', () => {
+    const savedMode = localStorage.getItem('preferredViewMode') || 'view-medium';
+    const select = document.getElementById('view-mode-select');
+    if (select) select.value = savedMode;
+    changeViewMode(savedMode);
+});
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMobileMenu);
 } else {
@@ -1621,46 +1754,68 @@ function rebuildMasonry(preferredColumns = null) {
     const items = Array.from(document.querySelectorAll('.item-card'));
     if (!container || items.length === 0) return;
 
-    const containerWidth = container.offsetWidth;
-    let columnsCount;
+    // Pobieramy aktualny tryb
+    const isDetails = container.classList.contains('view-details');
 
-    if (preferredColumns) {
-        columnsCount = preferredColumns;
-    } else {
-        if (window.innerWidth < 768) {
-            columnsCount = 1;
-        } else {
-            columnsCount = Math.max(1, Math.floor(containerWidth / 350));
-        }
-    }
-    const gap = 20;
-    
+    // Resetujemy kontener przed budowaniem
     container.innerHTML = '';
-    container.style.display = 'flex';
-    container.style.gap = `${gap}px`;
-    container.style.alignItems = 'flex-start';
 
-    const columns = [];
-    for (let i = 0; i < columnsCount; i++) {
-        const col = document.createElement('div');
-        col.className = 'masonry-column';
-        col.style.flex = '1';
-        col.style.display = 'flex';
-        col.style.flexDirection = 'column';
-        col.style.gap = `${gap}px`;
-        container.appendChild(col);
-        columns.push(col);
-    }
+    if (isDetails) {
+        // TRYB LISTY: Brak kolumn, elementy prosto do kontenera
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
 
-    items.forEach(item => {
-        item.style.width = '100%';
-
-        const shortestColumn = columns.reduce((prev, curr) => {
-            return (prev.offsetHeight <= curr.offsetHeight) ? prev : curr;
+        items.forEach(item => {
+            item.style.width = '100%';
+            item.style.gridRowEnd = 'auto'; // Reset dla grid
+            container.appendChild(item);
         });
+    } else {
+        // TRYB MASONRY: Budujemy kolumny
+        container.style.display = 'flex';
+        container.style.flexDirection = 'row'; // Przywracamy układ poziomy kolumn
 
-        shortestColumn.appendChild(item);
-    });
+        const containerWidth = container.offsetWidth;
+        let columnsCount;
+
+        if (preferredColumns) {
+            columnsCount = preferredColumns;
+        } else {
+            // Logika wyboru ilości kolumn na podstawie klasy widoku
+            if (window.innerWidth < 768) {
+                columnsCount = 1;
+            } else if (container.classList.contains('view-small')) {
+                columnsCount = Math.max(2, Math.floor(containerWidth / 180));
+            } else if (container.classList.contains('view-large')) {
+                columnsCount = Math.max(1, Math.floor(containerWidth / 450));
+            } else {
+                columnsCount = Math.max(1, Math.floor(containerWidth / 300));
+            }
+        }
+
+        const gap = 20;
+        container.style.gap = `${gap}px`;
+
+        const columns = [];
+        for (let i = 0; i < columnsCount; i++) {
+            const col = document.createElement('div');
+            col.className = 'masonry-column';
+            col.style.flex = '1';
+            col.style.display = 'flex';
+            col.style.flexDirection = 'column';
+            col.style.gap = `${gap}px`;
+            container.appendChild(col);
+            columns.push(col);
+        }
+
+        items.forEach(item => {
+            item.style.width = '100%';
+            const shortestColumn = columns.reduce((prev, curr) =>
+                (prev.offsetHeight <= curr.offsetHeight) ? prev : curr
+            );
+            shortestColumn.appendChild(item);
+        });
+    }
 }
 
 function initMasonry() {

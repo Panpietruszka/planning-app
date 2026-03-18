@@ -202,6 +202,12 @@ main {
     opacity: 0;
 }
 
+.icon-details-view,
+.favorite-btn-details,
+.item-subtitle {
+    display: none;
+}
+
 .item-card {
     display: block;
     width: 100%;
@@ -245,20 +251,144 @@ main {
     gap: 20px;
 }
 
+#feed-container.view-small {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 12px !important;
+}
+
+/* Widok: Średnie ikony (domyślny) */
+#feed-container.view-medium {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 20px !important;
+}
+
+/* Widok: Duże ikony */
+#feed-container.view-large {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)) !important;
+    gap: 30px !important;
+}
+
+#feed-container.view-small,
+#feed-container.view-medium,
+#feed-container.view-large {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+/* Widok: Szczegóły (Lista) */
+#feed-container.view-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+#feed-container.view-details .item-card,
+#feed-container.view-details .item-card.is-note-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 85px !important;
+    min-height: 85px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+#feed-container.view-details .details-hide-header,
+#feed-container.view-details .card-image-container,
+#feed-container.view-details .card-priority-indicator,
+#feed-container.view-details .action-btn-primary,
+#feed-container.view-details [id^="bg-load-"],
+#feed-container.view-details .font-consolas {
+    display: none !important;
+}
+
+#feed-container.view-details .card-body-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#feed-container.view-details .icon-details-view {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#feed-container.view-details .card-content-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#feed-container.view-details .item-subtitle {
+    display: block;
+    opacity: 0.6;
+}
+
+#feed-container.view-details .main-title {
+    margin-bottom: 0 !important;
+}
+
+/* Gwiazdka po prawej stronie */
+#feed-container.view-details .favorite-btn-details {
+    display: block;
+    font-size: 1.5rem;
+    margin-left: 15px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* --- NAPRAWA POWROTU DO MASONRY --- */
+#feed-container.view-small,
+#feed-container.view-medium,
+#feed-container.view-large {
+    flex-direction: row !important;
+}
+
+/* Zapewnienie, że kolumny Masonry zajmują całą szerokość przy powrocie */
+.masonry-column {
+    flex: 1;
+}
+
+#feed-container.view-details .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+
+#feed-container.view-details .favorite-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin: 0;
+}
+
 @media (max-width: 767px) {
 
     .item-card,
     .item-card.is-note-card {
-        max-width: 100% !important;
-        /* Pozwala karcie rozciągnąć się na całą szerokość kolumny */
         width: 100% !important;
     }
 
     #feed-container {
         padding: 10px;
-        /* Opcjonalnie: mniejszy margines na mobile */
         gap: 15px !important;
-        /* Mniejszy odstęp między kartami na mobile */
     }
 }
 
@@ -958,4 +1088,19 @@ input[type="range"]::-moz-range-thumb {
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+.grid-item {
+    width: 100%;
+    margin-bottom: 1rem;
+    break-inside: avoid;
+    /* To zapewni, że karty zawsze będą miały ten sam styl */
+    overflow: hidden;
+}
+
+.grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--global-radius);
 }

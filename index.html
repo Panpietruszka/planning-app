@@ -619,6 +619,17 @@
                                 class="w-full h-1.5 bg-black appearance-none cursor-pointer accent-[var(--primary-color)]"
                                 style="border-radius: calc(var(--global-radius));">
                         </div>
+                        <div class="p-8 bg-[#080808] border border-white/5 col-span-2" style="border-radius: calc(var(--global-radius));">
+                            <h4 class="font-semibold mb-6 text-white">Grid View Mode</h4>
+                            <select id="view-mode-select" onchange="changeViewMode(this.value); autoSaveSettings();"
+                                class="w-full bg-black text-white p-3 border border-white/10 outline-none focus:border-[var(--primary-color)] transition-colors"
+                                style="border-radius: calc(var(--global-radius));">
+                                <option value="view-small">Small Icons</option>
+                                <option value="view-medium" selected>Medium Icons</option>
+                                <option value="view-large">Large Icons</option>
+                                <option value="view-details">Details (List)</option>
+                            </select>
+                        </div>
                     </section>
                 </div>
             </div>
