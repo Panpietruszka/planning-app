@@ -658,6 +658,17 @@ function prependSingleElementToUI(data) {
     div.className = `item-card p-6 flex flex-col group transition-all ${noteClass}`;
     div.style.borderRadius = "var(--global-radius)";
     div.onclick = () => window.openEditor(data.id);
+    div.oncontextmenu = (e) => {
+        const container = document.getElementById('feed-container');
+        // Sprawdzamy czy kontener istnieje i czy ma klasę view-details
+        const isDetailsMode = container && container.classList.contains('view-details');
+
+        if (isDetailsMode && data.type === 'link' && data.linkData?.fullUrl) {
+            window.open(data.linkData.fullUrl, '_blank');
+            // Jeśli chcesz, aby przy okazji NIE otwierało się menu systemowe, dodaj:
+            // e.preventDefault(); 
+        }
+    };
     div.innerHTML = createCardContentHTML(data);
 
     container.prepend(div);
@@ -833,6 +844,15 @@ function renderFeed() {
         card.style.borderRadius = "var(--global-radius)";
         card.onclick = () => window.openEditor(item.id);
 
+        card.oncontextmenu = (e) => {
+            const container = document.getElementById('feed-container');
+            const isDetailsMode = container && container.classList.contains('view-details');
+
+            if (isDetailsMode && item.type === 'link' && item.linkData?.fullUrl) {
+                window.open(item.linkData.fullUrl, '_blank');
+            }
+        };
+
         // Używamy Twojej oryginalnej funkcji treści
         card.innerHTML = createCardContentHTML(item);
 
@@ -962,7 +982,6 @@ function renderBatch() {
     if (nextBatch.length === 0) return;
 
     const htmlBatch = nextBatch.map(i => {
-
         const isLink = i.type === 'link';
         const isCode = i.type === 'code';
         const isFile = i.type === 'file';
@@ -970,13 +989,17 @@ function renderBatch() {
         const isNote = !isLink && !isCode && !isFile;
         const noteClass = isNote ? 'is-note-card' : '';
 
+        // Przygotowujemy zmienną z URL, żeby kod był czytelniejszy
+        const linkUrl = i.linkData?.fullUrl || '';
+
         return `
-        <div data-id="${i.id}" 
-             class="item-card p-6 flex flex-col group transition-all ${noteClass}" 
-             style="border-radius: var(--global-radius);" 
-             onclick="window.openEditor('${i.id}')">
-            ${createCardContentHTML(i)}
-        </div>`;
+    <div data-id="${i.id}" 
+         class="item-card p-6 flex flex-col group transition-all ${noteClass}" 
+         style="border-radius: var(--global-radius);" 
+         onclick="window.openEditor('${i.id}')"
+         oncontextmenu="if(document.getElementById('feed-container').classList.contains('view-details') && '${i.type}' === 'link') { event.preventDefault(); window.open('${linkUrl}', '_blank'); }">
+        ${createCardContentHTML(i)}
+    </div>`;
     }).join('');
 
     container.insertAdjacentHTML('beforeend', htmlBatch);
@@ -1359,11 +1382,12 @@ document.addEventListener('click', (e) => {
 
 window.setCollection = (id) => {
     activeCollection = id;
-    // Resetujemy scroll, żeby użytkownik nie był w połowie strony po wejściu do folderu
+
     window.scrollTo(0, 0);
-    renderSidebar(); // Żeby podświetlić aktywny folder w panelu bocznym
-    renderFeed();    // Żeby wyświetlić nową zawartość
+    renderSidebar();
+    renderFeed();
 };
+
 window.toggleExpand = (e, id) => { e.stopPropagation(); expandedCollections.has(id) ? expandedCollections.delete(id) : expandedCollections.add(id); renderSidebar(); };
 window.toggleFav = async (id, cur) => await updateDoc(doc(db, 'raindrop_items', id), { isFav: !cur });
 window.quickDelete = async (id) => {
@@ -1712,12 +1736,8 @@ function changeViewMode(mode) {
     const container = document.getElementById('feed-container');
     if (!container) return;
 
-    // Usuwamy wszystkie poprzednie klasy widoku
     container.classList.remove('view-small', 'view-medium', 'view-large', 'view-details');
-
-
     container.classList.add(mode);
-
     localStorage.setItem('preferredViewMode', mode);
 
     if (typeof rebuildMasonry === 'function') {
@@ -1727,7 +1747,6 @@ function changeViewMode(mode) {
 
 window.changeViewMode = changeViewMode;
 
-// Inicjalizacja zapisanego widoku przy starcie strony
 document.addEventListener('DOMContentLoaded', () => {
     const savedMode = localStorage.getItem('preferredViewMode') || 'view-medium';
     const select = document.getElementById('view-mode-select');
@@ -1749,6 +1768,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     translatePage();
 });
+
+document.getElementById('open-settings-nav')?.addEventListener('click', () => {
+    const aside = document.getElementById('settings-aside');
+    if (aside) {
+        aside.classList.add('mobile-active');
+    } else {
+        console.error("Nie znaleziono elementu #settings-aside w HTML!");
+    }
+});
+
+document.getElementById('close-settings-nav')?.addEventListener('click', () => {
+    const aside = document.getElementById('settings-aside');
+    if (aside) {
+        aside.classList.remove('mobile-active');
+    }
+});
+
+// Wyjście z całego modala (przycisk strzałki po lewej)
+document.getElementById('exit-settings-btn-mobile')?.addEventListener('click', () => {
+    document.getElementById('settings-modal').classList.add('hidden');
+});
+
 function rebuildMasonry(preferredColumns = null) {
     const container = document.getElementById('feed-container');
     const items = Array.from(document.querySelectorAll('.item-card'));
