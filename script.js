@@ -1463,11 +1463,18 @@ settingsModal.onclick = (e) => { if (e.target === settingsModal) closeModal(); }
 settingsNavItems.forEach(item => {
     item.onclick = () => {
         const targetSection = item.getAttribute('data-section');
+        
         settingsNavItems.forEach(nav => nav.classList.remove('active'));
         item.classList.add('active');
+
         settingsSections.forEach(section => {
             section.classList.toggle('hidden', section.id !== `settings-section-${targetSection}`);
         });
+
+        const settingsAside = document.querySelector('#settings-modal aside');
+        if (settingsAside) {
+            settingsAside.classList.remove('mobile-active');
+        }
     };
 });
 

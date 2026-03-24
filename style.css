@@ -1046,7 +1046,6 @@ input[type="range"]::-moz-range-thumb {
 
     .settings-nav-item div {
         display: block !important;
-        /* Pokazujemy opisy na mobile w pełnym menu */
     }
 
     #settings-main-content {
