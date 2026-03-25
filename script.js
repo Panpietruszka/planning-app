@@ -1507,10 +1507,10 @@ document.querySelectorAll('.accent-picker').forEach(button => {
     };
 });
 
-function updateRadius(value) {
+window.updateRadius = function (value) {
     document.documentElement.style.setProperty('--global-radius', value + 'px');
     autoSaveSettings();
-}
+};
 
 function applyPrimaryColor(color) {
     const root = document.documentElement;
@@ -1865,6 +1865,26 @@ function rebuildMasonry(preferredColumns = null) {
         });
     }
 }
+
+function adjustMobileCards() {
+    const cards = document.querySelectorAll('.item-card');
+    const isMobile = window.innerWidth <= 768;
+
+    cards.forEach(card => {
+        if (isMobile) {
+            card.style.width = '100%';
+            card.style.maxWidth = '100%';
+        } else {
+            // Przywróć wartości domyślne dla desktopa
+            card.style.width = '';
+            card.style.maxWidth = '';
+        }
+    });
+}
+
+// Uruchom przy ładowaniu i przy zmianie rozmiaru okna
+window.addEventListener('load', adjustMobileCards);
+window.addEventListener('resize', adjustMobileCards);
 
 function initMasonry() {
     rebuildMasonry();
