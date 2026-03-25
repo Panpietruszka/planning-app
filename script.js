@@ -1875,7 +1875,6 @@ function adjustMobileCards() {
             card.style.width = '100%';
             card.style.maxWidth = '100%';
         } else {
-            // Przywróć wartości domyślne dla desktopa
             card.style.width = '';
             card.style.maxWidth = '';
         }
